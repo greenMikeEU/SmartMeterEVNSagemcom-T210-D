@@ -28,7 +28,7 @@ try:
     client = mqtt.Client("SmartMeter")
     client.connect(mqttBroker)
 except:
-    print("Die Ip Adresse der Brokers ist falsch!")
+    print("Die Ip Adresse des Brokers ist falsch!")
     sys.exit()
     
 tr = GXDLMSTranslator()
