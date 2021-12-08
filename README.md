@@ -49,7 +49,7 @@ Es sind bis jetzt nur zwei Fehlermeldungen implementiert!
 * Wenn der Fehler "Fehler beim Synchronisieren. Programm bitte ein weiteres mal Starten." kommt, muss mann ca. drei Sekunden warten. Nach ein paar Versuchen sollte es problemlos starten.
 
 ### MQTT Topics
-Diese können ab der Zeile 144 bis 155 verändert werden. Standardmäßig sind folgende eingeställt.
+Diese können ab der Zeile 144 bis 155 verändert werden. Standardmäßig sind folgende eingestellt.
 | Topic                         | Kommentar                                       | Einheit   |    
 | ------------------------------| -------------                                   |-------------  |
 | Smartmeter/WirkenergieP       | bezogene Energie                                | Wh (keine kWh)|
