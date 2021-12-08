@@ -13,7 +13,7 @@ from gurux_dlms.TranslatorOutputType import TranslatorOutputType
 
 
 # EVN Schlüssel als String eingeben also mit ""
-evn_schluessel = "19209f6fa5a8d3faa72f4d107B8d1e89"
+evn_schluessel = "YOUR KEY"
 
 #MQTT Verwenden (True | False)
 useMQTT = True
