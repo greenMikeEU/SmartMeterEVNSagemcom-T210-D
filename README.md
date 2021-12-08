@@ -69,6 +69,9 @@ Die Einheiten sind auf die Grundeinheit bezogen worden nicht wie im EVN-Folder!
 ### Bugs
 * Wenn eine PV-Anlage vorhanden ist und diese mehr Produziert als unmittelbar verbraucht wird, erhählt man einen cos phi von ca. 60. Dieser hat physikalisch keine Bedeutung für mich. Im Normalfall ist dieser zwischen 0 - 1.
 
+### Versionsunterschied
+Es sind 2 Python Programme beide machen grundsäzlich das selbe nur die Syncronisierung ist unterschiedlich. Es funktinieren beide aber sie wurden noch nicht im Dauereinsatz getestet. Welches sich als stabieler herausstellt wird auf dauer bleiben und das andere entfernt.
+
 ## License
 
 This project is licensed under the GNU General Public License v3.0 License - see the LICENSE.md file for details
