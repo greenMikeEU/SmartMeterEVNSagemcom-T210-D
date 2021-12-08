@@ -12,7 +12,9 @@ Dieses Projekt ermöglicht es den Smartmeter der EVN (Netz Niederösterreich) ü
   * Kann hier Angefordert werden. smartmeter@netz-noe.at
   * Kundennummer oder Vertragskontonummer
   * Zählernummer
-
+### Zähler Hersteller
+* Sagemcom Drehstromzähler T210-D
+Bei den anderen Zählertypen von der EVN kann ich keine Auskunft geben ob diese Programm funktioniert. Jeder oben genante ist getestet. Wenn es wer testet bitte bescheid geben dann kann die Liste erweitert werden.
 
 ### Voraussetzungen Software
 * Raspbian
