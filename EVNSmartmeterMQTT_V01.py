@@ -165,7 +165,7 @@ while 1:
             client.publish("Smartmeter/Momentanleistung",MomentanleistungP - MomentanleistungN)
             client.publish("Smartmeter/SpannungL1",SpannungL1)
             client.publish("Smartmeter/SpannungL2",SpannungL2)
-            client.publish("Smartmeter/SpannungL3",SpannungL2)
+            client.publish("Smartmeter/SpannungL3",SpannungL3)
             client.publish("Smartmeter/StromL1",StromL1)
             client.publish("Smartmeter/StromL2",StromL2)
             client.publish("Smartmeter/StromL3",StromL3)

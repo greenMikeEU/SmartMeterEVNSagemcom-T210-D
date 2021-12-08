@@ -9,7 +9,7 @@ from gurux_dlms.GXDLMSTranslator import GXDLMSTranslator
 from bs4 import BeautifulSoup
 
 # EVN Schlüssel als String eingeben also mit ""
-evn_schluessel = "016F76543557DE95260DA068B9C640A9"
+evn_schluessel = "dein EVN Schlüssel"
 
 #MQTT Verwenden (True | False)
 useMQTT = True
@@ -148,7 +148,7 @@ while 1:
             client.publish("Smartmeter/Momentanleistung",MomentanleistungP - MomentanleistungN)
             client.publish("Smartmeter/SpannungL1",SpannungL1)
             client.publish("Smartmeter/SpannungL2",SpannungL2)
-            client.publish("Smartmeter/SpannungL3",SpannungL2)
+            client.publish("Smartmeter/SpannungL3",SpannungL3)
             client.publish("Smartmeter/StromL1",StromL1)
             client.publish("Smartmeter/StromL2",StromL2)
             client.publish("Smartmeter/StromL3",StromL3)
