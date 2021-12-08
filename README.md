@@ -29,6 +29,7 @@ Dieses Projekt ermöglicht es den Smartmeter der EVN (Netz Niederösterreich) ü
 sudo pip3 install gurux-dlms
 sudo pip3 install beautifulsoup4
 sudo pip3 install paho-mqtt
+sudo pip3 install lxml
 ```
 
 ### Anpassen des Pythonprogrammes
