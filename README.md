@@ -33,6 +33,10 @@ sudo pip3 install beautifulsoup4
 sudo pip3 install paho-mqtt
 sudo pip3 install lxml
 ```
+Für die Version EVNSmartmeterMQTT_V01.py wird eine weitere Librarie benötogt
+```
+sudo apt install python3-pycryptodome
+```
 
 ### Anpassen des Pythonprogrammes & Einstellungen
 Öffne die Python Datei (EvnSmartmeterMQTT.py) mit einem beliebigen Editor. Die Betreffenden Zeilen sind 12, 15, 18, 21 und 24. In Zeile 12 muss der EVN Schlüssel eingetragen werden zwischen den "dein EVN Schlüssel". In Zeile 15 kann man die Ausgabe über MQTT auswählen wenn diese auf True ist dann muss man eine gültige MQTT IP Adresse in Zeile eingeben.Es reicht nur die IP Adresse zb: "192.168.1.99". Die Datei speichern. In Zeile 24 kann noch der Comport eingestellt werden. 
@@ -50,7 +54,7 @@ Es sind bis jetzt nur zwei Fehlermeldungen implementiert!
 
 ### MQTT Topics
 Diese können ab der Zeile 144 bis 155 verändert werden. Standardmäßig sind folgende eingestellt.
-| Topic                         | Kommentar                                       | Einheit   |    
+| Topic                         | Kommentar                                       | Einheit       |    
 | ------------------------------| -------------                                   |-------------  |
 | Smartmeter/WirkenergieP       | bezogene Energie                                | Wh (keine kWh)|
 | Smartmeter/WirkenergieN       | gelieferte Energie                              | Wh (keine kWh)|
@@ -70,7 +74,15 @@ Die Einheiten sind auf die Grundeinheit bezogen worden nicht wie im EVN-Folder!
 * Wenn eine PV-Anlage vorhanden ist und diese mehr Produziert als unmittelbar verbraucht wird, erhählt man einen cos phi von ca. 60. Dieser hat physikalisch keine Bedeutung für mich. Im Normalfall ist dieser zwischen 0 - 1.
 
 ### Versionsunterschied
-Es sind 2 Python Programme beide machen grundsäzlich das selbe nur die Syncronisierung ist unterschiedlich. Es funktinieren beide aber sie wurden noch nicht im Dauereinsatz getestet. Welches sich als stabieler herausstellt wird auf dauer bleiben und das andere entfernt.
+Es sind 2 Python Programme beide machen grundsäzlich das selbe nur die Syncronisierung ist unterschiedlich. Es funktinieren beide aber sie wurden noch nicht im Dauereinsatz getestet. Welches sich als stabieler herausstellt wird auf Dauer bleiben und das andere entfernt.
+
+EvnSmartmeterMQTT.py
+* wenn es startet sollte es alle 5 Sekunden Werte senden ohne Unterbrechung
+* der längste Dauertest war 14 Tage und dann ist es Abgestürtz. (Fehler muss nicht im Skript sein kann ein Absturz vom Broker oder Pi selber gewesen sein)
+
+EVNSmartmeterMQTT_V01.py
+* bei diesem Programm ist mir selber schon aufgefallen dass nicht alle 5 Sekunden Werte kommen aber dafür Syncronisiert es sich selber und stürtz nicht ab.
+* Testzeitraum war ca. Stunden.
 
 ## License
 
