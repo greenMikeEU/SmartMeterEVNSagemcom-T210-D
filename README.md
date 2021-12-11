@@ -6,7 +6,7 @@ Dieses Projekt ermöglicht es den Smartmeter der EVN (Netz Niederösterreich) ü
 ### Voraussetzungen Hardware
 * Passwort für die Kundenschnittstelle
   * Alle folgenden Informationen sind aus dem Folder der EVN. (https://www.netz-noe.at/Download-(1)/Smart-Meter/218_9_SmartMeter_Kundenschnittstelle_lektoriert_14.aspx)
-  * Kann hier Angefordert werden. smartmeter@netz-noe.at
+  * Kann hier angefordert werden. smartmeter@netz-noe.at
   * Kundennummer oder Vertragskontonummer
   * Zählernummer
 
@@ -15,7 +15,8 @@ Dieses Projekt ermöglicht es den Smartmeter der EVN (Netz Niederösterreich) ü
 
 ### Zähler Hersteller
 * Sagemcom Drehstromzähler T210-D
-Bei den anderen Zählertypen von der EVN kann ich keine Auskunft geben ob diese Programm funktioniert. Jeder oben genannte ist getestet. Wenn es jemand testet bitte Bescheid, geben dann kann die Liste erweitert werden kann.
+
+Bei den anderen Zählertypen von der EVN kann ich keine Auskunft geben ob diese Programm funktioniert. Die oben genannte Zählertypen sind getestet. Wenn es jemand testet bitte Bescheid, geben dann kann die Liste erweitert werden kann.
 
 ### Voraussetzungen Software
 * Raspbian
@@ -25,21 +26,22 @@ Bei den anderen Zählertypen von der EVN kann ich keine Auskunft geben ob diese 
     * beautifulsoup4
     * paho-mqtt
 
-|Produkt                           |wird benötigt| Amazon                  | Aliexpress                               |   
+|Produkt                           |wird benötigt| Amazon                  | Aliexpress                               |
+|----------------------------------|-------------|-------------------------|------------------------------------------|   
 |Raspberry Pi 4                    |Ja           | https://amzn.to/31HA7PC | --                                       |
 |Raspberry Pi 4 Hutschienen Gehäuse|Nein         | https://amzn.to/3GyAY3I | --                                       |
 |USB-zu-MBUS-Slave-Modul           |Ja           | https://amzn.to/3GA3HoW | https://s.click.aliexpress.com/e/_9yVpxq |
 |RJ-12 Kabel                       |Ja           | https://amzn.to/3EIL55s |                                          |
 
 
-### Installation der Libaararies
+### Installation der Libararies
 ```
 sudo pip3 install gurux-dlms
 sudo pip3 install beautifulsoup4
 sudo pip3 install paho-mqtt
 sudo pip3 install lxml
 ```
-Für die Version EVNSmartmeterMQTT_V01.py wird eine weitere Librarie benötogt
+Für die Version EVNSmartmeterMQTT_V01.py wird eine weitere Libarariy benötogt
 ```
 sudo apt install python3-pycryptodome
 ```
@@ -92,11 +94,11 @@ EVNSmartmeterMQTT_V01.py
 
 
 ### Roadmap (Updates)
-Es soll eine Version mit einem ESP32 kommen der liest die Daten ein und schickt sie auf einen bestehenden Server weiter um sich den Kabelweg zu sparen oder den Raspberry.
-Wenn ich es schaffe will ich ein eigenes Modul auf den Markt bringen das es Pluq and Play funktiniert und nur einen Bruchteil eines Raspberry´s kostet.
+Es soll eine Version mit einem ESP32 kommen, dieser liest die Daten ein und schickt sie auf einen bestehenden Server weiter. Um sich den Kabelweg zu sparen oder den Raspberry.
+Wenn ich es schaffe will ich ein eigenes Modul auf den Markt bringen, dass Plug and Play funktioniert und nur einen Bruchteil eines Raspberry´s kostet.
 
 ### Hinweis
-Alle Links zu Produkten sind Affiliate Links. Somit unterstützt ihr diese und weitere Projekte.
+Alle Links zu Produkten sind Affiliate Links. Somit unterstützt ihr diese und weitere Projekte von mir.
 
 ## License
 
