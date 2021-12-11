@@ -4,14 +4,14 @@ Dieses Projekt ermöglicht es den Smartmeter der EVN (Netz Niederösterreich) ü
 
 ## Getting Started
 ### Voraussetzungen Hardware
-* Raspberry PI (getestet ist der Pi3 B+)
-* RJ-12 Kabel
-* MBus-Adapter auf USB (ich selber habe diesen https://amzn.to/3psoPqg)
 * Passwort für die Kundenschnittstelle
   * Alle folgenden Informationen sind aus dem Folder der EVN. (https://www.netz-noe.at/Download-(1)/Smart-Meter/218_9_SmartMeter_Kundenschnittstelle_lektoriert_14.aspx)
   * Kann hier Angefordert werden. smartmeter@netz-noe.at
   * Kundennummer oder Vertragskontonummer
   * Zählernummer
+
+
+
 ### Zähler Hersteller
 * Sagemcom Drehstromzähler T210-D
 Bei den anderen Zählertypen von der EVN kann ich keine Auskunft geben ob diese Programm funktioniert. Jeder oben genante ist getestet. Wenn es wer testet bitte bescheid geben dann kann die Liste erweitert werden.
@@ -24,6 +24,11 @@ Bei den anderen Zählertypen von der EVN kann ich keine Auskunft geben ob diese 
     * beautifulsoup4
     * paho-mqtt
 
+|Produkt                           |wird benötigt| Amazon                  | Aliexpress                               |   
+|Raspberry Pi 4                    |Ja           | https://amzn.to/31HA7PC | --                                       |
+|Raspberry Pi 4 Hutschienen Gehäuse|Nein         | https://amzn.to/3GyAY3I | --                                       |
+|USB-zu-MBUS-Slave-Modul           |Ja           | https://amzn.to/3GA3HoW | https://s.click.aliexpress.com/e/_9yVpxq |
+|RJ-12 Kabel                       |Ja           | https://amzn.to/3EIL55s |                                          |
 
 
 ### Installation der Libaararies
@@ -83,6 +88,14 @@ EvnSmartmeterMQTT.py
 EVNSmartmeterMQTT_V01.py
 * bei diesem Programm ist mir selber schon aufgefallen dass nicht alle 5 Sekunden Werte kommen aber dafür Syncronisiert es sich selber und stürtz nicht ab.
 * Testzeitraum war ca. Stunden.
+
+
+### Roadmap (Updates)
+Es soll eine Version mit einem ESP32 kommen der liest die Daten ein und schickt sie auf einen bestehenden Server weiter um sich den Kabelweg zu sparen oder den Raspberry.
+Wenn ich es schaffe will ich ein eigenes Modul auf den Markt bringen das es Pluq and Play funktiniert und nur einen Bruchteil eines Raspberry´s kostet.
+
+### Hinweis
+Alle Links zu Produkten sind Affiliate Links. Somit unterstützt ihr diese und weitere Projekte.
 
 ## License
 
