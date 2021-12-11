@@ -32,6 +32,7 @@ Bei den anderen Zählertypen von der EVN kann ich keine Auskunft geben ob diese 
 |Raspberry Pi 4 Hutschienen Gehäuse|Nein         | https://amzn.to/3GyAY3I | --                                       |
 |USB-zu-MBUS-Slave-Modul           |Ja           | https://amzn.to/3GA3HoW | https://s.click.aliexpress.com/e/_9yVpxq |
 |RJ-12 Kabel                       |Ja           | https://amzn.to/3EIL55s |                                          |
+|Schaltschrank Steckdose           |Nein         | https://amzn.to/3ygAImW |                                          |
 
 
 ### Installation der Libararies
@@ -79,7 +80,7 @@ Diese können ab der Zeile 144 bis 155 verändert werden. Standardmäßig sind f
 
 Die Einheiten sind auf die Grundeinheit bezogen worden nicht wie im EVN-Folder!
 ### Bugs
-* Wenn eine PV-Anlage vorhanden ist und diese mehr Produziert als unmittelbar verbraucht wird, erhählt man einen cos phi von ca. 60. Dieser hat physikalisch keine Bedeutung für mich. Im Normalfall ist dieser zwischen 0 - 1.
+* Wenn eine PV-Anlage vorhanden ist und diese mehr produziert als unmittelbar verbraucht wird, erhählt man einen cos phi von ca. 60. Dieser hat physikalisch keine Bedeutung für mich. Im Normalfall ist dieser zwischen 0 - 1.
 
 ### Versionsunterschied
 Es sind 2 Python Programme beide machen grundsäzlich das selbe nur die Synchronisierung ist unterschiedlich. Es funktionieren beide aber sie wurden noch nicht im Dauereinsatz getestet. Welches sich als stabiler herausstellt wird auf Dauer bleiben und das andere entfernt.
