@@ -12,9 +12,10 @@ Dieses Projekt ermöglicht es den Smartmeter der EVN (Netz Niederösterreich) ü
 
 
 
+
 ### Zähler Hersteller
 * Sagemcom Drehstromzähler T210-D
-Bei den anderen Zählertypen von der EVN kann ich keine Auskunft geben ob diese Programm funktioniert. Jeder oben genante ist getestet. Wenn es wer testet bitte bescheid geben dann kann die Liste erweitert werden.
+Bei den anderen Zählertypen von der EVN kann ich keine Auskunft geben ob diese Programm funktioniert. Jeder oben genannte ist getestet. Wenn es jemand testet bitte Bescheid, geben dann kann die Liste erweitert werden kann.
 
 ### Voraussetzungen Software
 * Raspbian
@@ -54,7 +55,7 @@ sudo python3 /home/pi/Desktop/EvnSmartmeterMQTT.py
 
 ### Fehlermeldungen des Pythonprogrammes
 Es sind bis jetzt nur zwei Fehlermeldungen implementiert!
-* Wenn keine Verbindung zum Broker aufgebaut werden kann dann wird der Fehler "Die Ip Adresse des Brokers ist falsch!" ausgegeben. Zur Fehlerbehebung muss die richtige IP Adresse angeben werden.
+* Wenn keine Verbindung zum Broker aufgebaut werden kann dann wird der Fehler "Die Ip Adresse des Brokers ist falsch!" ausgegeben. Zur Fehlerbehebung muss die richtige IP Adresse angegeben werden.
 * Wenn der Fehler "Fehler beim Synchronisieren. Programm bitte ein weiteres mal Starten." kommt, muss mann ca. drei Sekunden warten. Nach ein paar Versuchen sollte es problemlos starten.
 
 ### MQTT Topics
@@ -79,7 +80,7 @@ Die Einheiten sind auf die Grundeinheit bezogen worden nicht wie im EVN-Folder!
 * Wenn eine PV-Anlage vorhanden ist und diese mehr Produziert als unmittelbar verbraucht wird, erhählt man einen cos phi von ca. 60. Dieser hat physikalisch keine Bedeutung für mich. Im Normalfall ist dieser zwischen 0 - 1.
 
 ### Versionsunterschied
-Es sind 2 Python Programme beide machen grundsäzlich das selbe nur die Syncronisierung ist unterschiedlich. Es funktinieren beide aber sie wurden noch nicht im Dauereinsatz getestet. Welches sich als stabieler herausstellt wird auf Dauer bleiben und das andere entfernt.
+Es sind 2 Python Programme beide machen grundsäzlich das selbe nur die Synchronisierung ist unterschiedlich. Es funktionieren beide aber sie wurden noch nicht im Dauereinsatz getestet. Welches sich als stabiler herausstellt wird auf Dauer bleiben und das andere entfernt.
 
 EvnSmartmeterMQTT.py
 * wenn es startet sollte es alle 5 Sekunden Werte senden ohne Unterbrechung
