@@ -100,6 +100,7 @@ Wenn ich es schaffe will ich ein eigenes Modul auf den Markt bringen, dass Plug 
 
 ### Hinweis
 Alle Links zu Produkten sind Affiliate Links. Somit unterstützt ihr diese und weitere Projekte von mir.
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](mreitbauer@gmx.net)
 
 ## License
 
