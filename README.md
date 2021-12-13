@@ -28,10 +28,10 @@ Bei den anderen Zählertypen von der EVN kann ich keine Auskunft geben ob diese 
 
 |Produkt                           |wird benötigt| Amazon                  | Aliexpress                               |
 |----------------------------------|-------------|-------------------------|------------------------------------------|   
-|Raspberry Pi 4                    |Ja           | https://amzn.to/31HA7PC | --                                       |
-|Raspberry Pi 4 Hutschienen Gehäuse|Nein         | https://amzn.to/3GyAY3I | --                                       |
-|USB-zu-MBUS-Slave-Modul           |Ja           | https://amzn.to/3GA3HoW | https://s.click.aliexpress.com/e/_9yVpxq |
-|RJ-12 Kabel                       |Ja           | https://amzn.to/3EIL55s |                                          |
+|Raspberry Pi 4                    |Ja           | https://amzn.to/3DR1Jib | --                                       |
+|Raspberry Pi 4 Hutschienen Gehäuse|Nein         | https://amzn.to/3dLP99h | --                                       |
+|USB-zu-MBUS-Slave-Modul           |Ja           | https://amzn.to/3DQZBqL | https://s.click.aliexpress.com/e/_9yVpxq |
+|RJ-12 Kabel                       |Ja           | https://amzn.to/3oOGg51 |                                          |
 |Schaltschrank Steckdose           |Nein         | https://amzn.to/3ygAImW |                                          |
 
 
