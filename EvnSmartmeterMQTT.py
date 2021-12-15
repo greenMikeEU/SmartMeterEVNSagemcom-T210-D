@@ -8,7 +8,7 @@ import paho.mqtt.client as mqtt
 from gurux_dlms.GXDLMSTranslator import GXDLMSTranslator
 from bs4 import BeautifulSoup
 
-# EVN Schlüssel als String eingeben also mit ""
+# EVN Schlüssel eingeben zB. "36C66639E48A8CA4D6BC8B282A793BBB"
 evn_schluessel = "dein EVN Schlüssel"
 
 #MQTT Verwenden (True | False)

@@ -1,14 +1,16 @@
 # SmartMeterEVN
 Dieses Projekt ermöglicht es den Smartmeter der EVN (Netz Niederösterreich) über die Kundenschnittstelle auszulesen.
-
+Smart Meter werden von der Netz NÖ GmbH eingebaut, auf Basis der gesetzlichen Forderungen.
 
 ## Getting Started
 ### Voraussetzungen Hardware
+
+
 * Passwort für die Kundenschnittstelle
   * Alle folgenden Informationen sind aus dem Folder der EVN. (https://www.netz-noe.at/Download-(1)/Smart-Meter/218_9_SmartMeter_Kundenschnittstelle_lektoriert_14.aspx)
-  * Kann hier angefordert werden. smartmeter@netz-noe.at
-  * Kundennummer oder Vertragskontonummer
-  * Zählernummer
+  * Wenn bereits ein Smart Meter in der Kundenanlage eingebaut ist, kann hier das der Schlüssel angefordert werden: smartmeter@netz-noe.at
+    * Kundennummer oder Vertragskontonummer
+    * Zählernummer
 
 
 
@@ -16,7 +18,7 @@ Dieses Projekt ermöglicht es den Smartmeter der EVN (Netz Niederösterreich) ü
 ### Zähler Hersteller
 * Sagemcom Drehstromzähler T210-D
 
-Bei den anderen Zählertypen von der EVN kann ich keine Auskunft geben ob diese Programm funktioniert. Die oben genannte Zählertypen sind getestet. Wenn es jemand testet bitte Bescheid, geben dann kann die Liste erweitert werden kann.
+Die folgende Beschreibung bzw. das durchgeführte Projekt bezieht sich nur auf den angegebenen Zählertyp. Für weitere Zählertypen, welche vom Netzbetreiber eingebaut werden kann hier keine Garantie gegeben werde. Aufgrund der Angaben seitens dem Netzbetreiber, sollte die Anwendung möglich sein. Sollte es dazu Erfahrungen geben, können diese gerne an mich übermittelt werden.
 
 ### Voraussetzungen Software
 * Raspbian
@@ -42,16 +44,16 @@ sudo pip3 install beautifulsoup4
 sudo pip3 install paho-mqtt
 sudo pip3 install lxml
 ```
-Für die Version EVNSmartmeterMQTT_V01.py wird eine weitere Libarariy benötogt
+Für die Version EVNSmartmeterMQTT_V01.py wird eine weitere Libarariy benötogt.
 ```
 sudo apt install python3-pycryptodome
 ```
 
 ### Anpassen des Pythonprogrammes & Einstellungen
-Öffne die Python Datei (EvnSmartmeterMQTT.py) mit einem beliebigen Editor. Die Betreffenden Zeilen sind 12, 15, 18, 21 und 24. In Zeile 12 muss der EVN Schlüssel eingetragen werden zwischen den "dein EVN Schlüssel". In Zeile 15 kann man die Ausgabe über MQTT auswählen wenn diese auf True ist dann muss man eine gültige MQTT IP Adresse in Zeile eingeben.Es reicht nur die IP Adresse zb: "192.168.1.99". Die Datei speichern. In Zeile 24 kann noch der Comport eingestellt werden. 
+Öffne die Python Datei (EvnSmartmeterMQTT.py) mit einem beliebigen Editor. Die Betreffenden Zeilen sind 12, 15, 18, 21 und 24. In Zeile 12 muss der Schlüssel eingetragen werden zwischen den "dein EVN Schlüssel". Ein Beispiel ist im Programm angeführt. In Zeile 15 kann man die Ausgabe über MQTT auswählen wenn diese auf True ist dann muss man eine gültige MQTT IP Adresse in Zeile eingeben.Es reicht nur die IP Adresse zb: "192.168.1.99". Die Datei speichern. In Zeile 24 kann noch der Comport eingestellt werden. 
 
 ### Starten des Pythonprogrammes
-Wenn das Programm am Desktop liegt kann das Programm mit dem nächsten Befehl gestartet werden, sonst muss der Pfad geändert werden.
+Wenn das Programm am Desktop liegt kann es mit dem nächsten Befehl gestartet werden, sonst muss der Pfad geändert werden.
 ```
 sudo python3 /home/pi/Desktop/EvnSmartmeterMQTT.py
 ```
@@ -59,7 +61,7 @@ sudo python3 /home/pi/Desktop/EvnSmartmeterMQTT.py
 ### Fehlermeldungen des Pythonprogrammes
 Es sind bis jetzt nur zwei Fehlermeldungen implementiert!
 * Wenn keine Verbindung zum Broker aufgebaut werden kann dann wird der Fehler "Die Ip Adresse des Brokers ist falsch!" ausgegeben. Zur Fehlerbehebung muss die richtige IP Adresse angegeben werden.
-* Wenn der Fehler "Fehler beim Synchronisieren. Programm bitte ein weiteres mal Starten." kommt, muss mann ca. drei Sekunden warten. Nach ein paar Versuchen sollte es problemlos starten.
+* Wenn der Fehler "Fehler beim Synchronisieren. Programm bitte ein weiteres Mal Starten." Kommt, muss man ca. drei Sekunden warten. Nach ein paar Versuchen sollte es problemlos starten.
 
 ### MQTT Topics
 Diese können ab der Zeile 144 bis 155 verändert werden. Standardmäßig sind folgende eingestellt.
@@ -78,20 +80,20 @@ Diese können ab der Zeile 144 bis 155 verändert werden. Standardmäßig sind f
 | Smartmeter/StromL3            | Strom an L3                                     | A             |
 | Smartmeter/Leistungsfaktor    | Leistungsfaktor                                 |               |
 
-Die Einheiten sind auf die Grundeinheit bezogen worden nicht wie im EVN-Folder!
+Die Einheiten sind auf die Grundeinheit bezogen worden nicht wie im Folder des Netzbetreiber!
 ### Bugs
 * Wenn eine PV-Anlage vorhanden ist und diese mehr produziert als unmittelbar verbraucht wird, erhählt man einen cos phi von ca. 60. Dieser hat physikalisch keine Bedeutung für mich. Im Normalfall ist dieser zwischen 0 - 1.
 
 ### Versionsunterschied
-Es sind 2 Python Programme beide machen grundsäzlich das selbe nur die Synchronisierung ist unterschiedlich. Es funktionieren beide aber sie wurden noch nicht im Dauereinsatz getestet. Welches sich als stabiler herausstellt wird auf Dauer bleiben und das andere entfernt.
+Es sind 2 Python Programme beide machen grundsätzlich dasselbe nur die Synchronisierung ist unterschiedlich. Es funktionieren beide aber sie wurden noch nicht im Dauereinsatz getestet. Jenes Programm, welches sich als stabiler herausstellt wird auf Dauer bleiben und das andere entfernt.
 
 EvnSmartmeterMQTT.py
-* wenn es startet sollte es alle 5 Sekunden Werte senden ohne Unterbrechung
-* der längste Dauertest war 14 Tage und dann ist es Abgestürtz. (Fehler muss nicht im Skript sein kann ein Absturz vom Broker oder Pi selber gewesen sein)
+* Wenn es startet sollte es alle 5 Sekunden ohne Unterbrechung Werte senden.
+* Der längste Dauertest war 14 Tage und dann ist es abgestürzt. (Fehler muss nicht im Skript sein kann ein Absturz vom Broker oder Pi selber gewesen sein)
 
 EVNSmartmeterMQTT_V01.py
-* bei diesem Programm ist mir selber schon aufgefallen dass nicht alle 5 Sekunden Werte kommen aber dafür Syncronisiert es sich selber und stürtz nicht ab.
-* Testzeitraum war ca. Stunden.
+* Bei diesem Programm ist mir selber schon aufgefallen dass nicht alle 5 Sekunden Werte kommen aber dafür Syncronisiert es sich selber und stürtz nicht ab.
+* Testzeitraum war ca. 24 Stunden.
 
 
 ### Roadmap (Updates)

@@ -12,7 +12,7 @@ from time import sleep
 from gurux_dlms.TranslatorOutputType import TranslatorOutputType
 
 
-# EVN Schlüssel als String eingeben also mit ""
+# EVN Schlüssel eingeben zB. "36C66639E48A8CA4D6BC8B282A793BBB"
 evn_schluessel = "EVN Schlüssel"
 
 #MQTT Verwenden (True | False)
