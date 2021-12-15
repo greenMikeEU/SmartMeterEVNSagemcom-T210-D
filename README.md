@@ -11,6 +11,7 @@ Smart Meter werden von der Netz NÖ GmbH eingebaut, auf Basis der gesetzlichen F
   * Wenn bereits ein Smart Meter in der Kundenanlage eingebaut ist, kann hier das der Schlüssel angefordert werden: smartmeter@netz-noe.at
     * Kundennummer oder Vertragskontonummer
     * Zählernummer
+    * Handynummer
 
 
 
