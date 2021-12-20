@@ -32,6 +32,7 @@ Die folgende Beschreibung bzw. das durchgeführte Projekt bezieht sich nur auf d
 |Produkt                           |wird benötigt| Amazon                  | Aliexpress                               |
 |----------------------------------|-------------|-------------------------|------------------------------------------|   
 |Raspberry Pi 4                    |Ja           | https://amzn.to/3DR1Jib | --                                       |
+|Raspberry Pi 4 Starter Set        |Ja           | https://amzn.to/3EcQGQk | --                                       |
 |Raspberry Pi 4 Hutschienen Gehäuse|Nein         | https://amzn.to/3dLP99h | --                                       |
 |USB-zu-MBUS-Slave-Modul           |Ja           | https://amzn.to/3DQZBqL | https://s.click.aliexpress.com/e/_9yVpxq |
 |RJ-12 Kabel                       |Ja           | https://amzn.to/3oOGg51 |                                          |
