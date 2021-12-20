@@ -38,6 +38,9 @@ Die folgende Beschreibung bzw. das durchgeführte Projekt bezieht sich nur auf d
 |RJ-12 Kabel                       |Ja           | https://amzn.to/3oOGg51 |                                          |
 |Schaltschrank Steckdose           |Nein         | https://amzn.to/3ygAImW |                                          |
 
+### Verkabelung des Mbus Adapter
+Die beiden mittleren Kabel des RJ-12 Kabel müssen in die MBus Klemmen eingeklemmt werden. Dann muss der USB an den Raspberry angeschlossen werden.
+
 
 ### Installation der Libararies
 ```
