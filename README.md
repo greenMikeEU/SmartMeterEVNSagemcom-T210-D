@@ -31,12 +31,12 @@ Die folgende Beschreibung bzw. das durchgeführte Projekt bezieht sich nur auf d
 
 |Produkt                           |wird benötigt| Amazon                  | Aliexpress                               |
 |----------------------------------|-------------|-------------------------|------------------------------------------|   
-|Raspberry Pi 4                    |Ja           | https://amzn.to/3DR1Jib | --                                       |
-|Raspberry Pi 4 Starter Set        |Ja           | https://amzn.to/3EcQGQk | --                                       |
-|Raspberry Pi 4 Hutschienen Gehäuse|Nein         | https://amzn.to/3dLP99h | --                                       |
-|USB-zu-MBUS-Slave-Modul           |Ja           | https://amzn.to/3DQZBqL | https://s.click.aliexpress.com/e/_9yVpxq |
-|RJ-12 Kabel                       |Ja           | https://amzn.to/3oOGg51 |                                          |
-|Schaltschrank Steckdose           |Nein         | https://amzn.to/3ygAImW |                                          |
+|Raspberry Pi 4                    |Ja           | https://amzn.to/3mpunAZ | --                                       |
+|Raspberry Pi 4 Starter Set        |Ja           | https://amzn.to/3FoYX5q | --                                       |
+|Raspberry Pi 4 Hutschienen Gehäuse|Nein         | https://amzn.to/3mnCcqG | --                                       |
+|USB-zu-MBUS-Slave-Modul           |Ja           | https://amzn.to/33BnnKH | https://s.click.aliexpress.com/e/_9yVpxq |
+|RJ-12 Kabel                       |Ja           | https://amzn.to/3FdCMyO |                                          |
+|Schaltschrank Steckdose           |Nein         | https://amzn.to/3Eh1Kfi |                                          |
 
 ### Verkabelung des Mbus Adapter
 Die beiden mittleren Kabel des RJ-12 Kabel müssen in die MBus Klemmen eingeklemmt werden. Dann muss der USB an den Raspberry angeschlossen werden.
