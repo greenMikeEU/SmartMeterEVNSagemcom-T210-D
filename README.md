@@ -105,8 +105,11 @@ EVNSmartmeterMQTT_V01.py
 Es soll eine Version mit einem ESP32 kommen, dieser liest die Daten ein und schickt sie auf einen bestehenden Server weiter. Um sich den Kabelweg zu sparen oder den Raspberry.
 Wenn ich es schaffe will ich ein eigenes Modul auf den Markt bringen, dass Plug and Play funktioniert und nur einen Bruchteil eines Raspberry´s kostet.
 
-### Hinweis
-Alle Links zu Produkten sind Affiliate Links. Somit unterstützt ihr diese und weitere Projekte von mir.
+### Unterstützung
+Alle Links zu Aliexpress Produkten sind Affiliate Links. Die Amazon Produkte sind keine Affiliate Links. Somit unterstützt ihr diese und weitere Projekte von mir.
+Spendenlink: https://www.paypal.me/greenMikeEU
+BTC Adresse: bc1qv358vt7x8rwsz7wzmdu000twnxy3y96rdm6ymg
+ETH Adresse: 0xe85aCA9eD62fD5F9dDF4C217C181Fe4eF4816cEb
 
 ## License
 
