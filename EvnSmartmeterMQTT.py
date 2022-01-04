@@ -79,11 +79,11 @@ while 1:
     try:
         #Wirkenergie A+ in Wattstunden
         WirkenergiePA = str(results_32[0])
-        WirkenergieP = int(WirkenergiePA[WirkenergiePA.find('=')+2:WirkenergiePA.find('=')+10],16)
+        WirkenergieP = int(WirkenergiePA[WirkenergiePA.find('=')+2:WirkenergiePA.find('=')+10],16)/1000
 
         #Wirkenergie A- in Wattstunden
         WirkenergieNA = str(results_32[1])
-        WirkenergieN = int(WirkenergieNA[WirkenergiePA.find('=')+2:WirkenergiePA.find('=')+10],16)
+        WirkenergieN = int(WirkenergieNA[WirkenergiePA.find('=')+2:WirkenergiePA.find('=')+10],16)/1000
 
         #Momentanleistung P+ in Watt
         MomentanleistungPA = str(results_32[2])

@@ -1,5 +1,5 @@
 # Alle Infos zu diesem Projekt befinden sich auf meinem Blog
-http://www.michaelreitbauer.at/smart-meter-monitoring/
+https://www.michaelreitbauer.at/smart-meter-monitoring/
 
 
 # SmartMeterEVN
