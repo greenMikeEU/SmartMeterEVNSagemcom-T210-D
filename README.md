@@ -25,7 +25,6 @@ Smart Meter werden von der Netz NÖ GmbH eingebaut, auf Basis der gesetzlichen F
 
 
 ### Unterstützung
-Alle Links zu Aliexpress Produkten sind Affiliate Links. Die Amazon Produkte sind keine Affiliate Links. Somit unterstützt ihr diese und weitere Projekte von mir.
 Spendenlink: https://www.paypal.me/greenMikeEU
 
 ## License
