@@ -61,27 +61,22 @@ serIn = serial.Serial( port=comport,
 
 while 1:
     sleep(4.7)
-    #daten = ser.read(size=282).hex()
     daten = recv(serIn)
     if daten != '':
         daten = daten.hex()
     if (daten == '' or daten[0:8] != "68010168"):
         print ("Invalid Start Bytes... waiting")
         continue
-    #print ("Daten: ", daten);
     systemTitel = daten[22:38]
     frameCounter = daten[44:52]
     frame = daten[52:560]
-    #print("SystemTitle: ", systemTitel)
-    #print("FrameCounter: ", frameCounter)
     
 
     frame = unhexlify(frame)
     encryption_key = unhexlify(evn_schluessel)
     init_vector = unhexlify(systemTitel + frameCounter)
     cipher = AES.new(encryption_key, AES.MODE_GCM, nonce=init_vector)
-    apdu = cipher.decrypt(frame).hex()
-    #print("APDu: ", apdu)    
+    apdu = cipher.decrypt(frame).hex()    
 
     try:
         xml = tr.pduToXml(apdu,)
