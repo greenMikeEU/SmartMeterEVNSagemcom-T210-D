@@ -19,7 +19,10 @@ evn_schluessel = "EVN Schlüssel"
 useMQTT = True
 
 #MQTT Broker IP adresse Eingeben ohne Port!
-mqttBroker = "192.168.8.99"
+mqttBroker = "192.168.1.10"
+mqttuser =""
+mqttpasswort = ""
+mqttport = 1883
 
 #Comport Config/Init
 comport = "/dev/ttyUSB0"
@@ -40,11 +43,12 @@ def recv(serialIncoming):
     return data
     
 
-#MQTT Init 
+#MQTT Init
 if useMQTT:
     try:
         client = mqtt.Client("SmartMeter")
-        client.connect(mqttBroker)
+        client.username_pw_set(mqttuser, mqttpasswort)
+        client.connect(mqttBroker, mqttport)
     except:
         print("Die Ip Adresse des Brokers ist falsch!")
         sys.exit()
