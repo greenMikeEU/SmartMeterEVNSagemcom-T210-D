@@ -171,4 +171,4 @@ while 1:
             client.publish("Smartmeter/Leistungsfaktor",Leistungsfaktor)
     except BaseException as err:
         print("Fehler: ", format(err))
-        continue;
+        continue
