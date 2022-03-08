@@ -101,7 +101,7 @@ while 1:
 
         #Wirkenergie A- in Wattstunden
         WirkenergieNA = str(results_32[1])
-        WirkenergieN = int(WirkenergieNA[WirkenergiePA.find('=')+2:WirkenergiePA.find('=')+10],16)
+        WirkenergieN = int(WirkenergieNA[WirkenergieNA.find('=')+2:WirkenergieNA.find('=')+10],16)
         
         #Momentanleistung P+ in Watt
         MomentanleistungPA = str(results_32[2])
@@ -141,7 +141,7 @@ while 1:
                         
         if printValue:
             print('Wirkenergie+: ' + str(WirkenergieP))
-            print('Wirkenergie: ' + str(WirkenergieN))
+            print('Wirkenergie-: ' + str(WirkenergieN))
             print('MomentanleistungP+: ' + str(MomentanleistungP))
             print('MomentanleistungP-: ' + str(MomentanleistungN))
             print('Spannung L1: ' + str(SpannungL1))
