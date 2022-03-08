@@ -31,7 +31,7 @@ comport = "/dev/ttyUSB0"
 printValue = True
 
 
-# Hohlt daten von Serieler Schnittstelle
+# Holt Daten von serieller Schnittstelle
 def recv(serialIncoming):
     while True:
         data = serialIncoming.read_all()
@@ -41,7 +41,26 @@ def recv(serialIncoming):
             break
         sleep(0.5)
     return data
-    
+
+# Konvertiert Signed Ints
+def s16(value):
+    val = int(value, 16)
+    return -(val & 0x8000) | (val & 0x7fff)
+
+def s8(value):
+    val = int(value, 16)
+    return -(val & 0x80) | (val & 0x7f)
+
+# DLMS Blue Book Page 52
+# https://www.dlms.com/files/Blue_Book_Edition_13-Excerpt.pdf
+units = {
+            27: "W", # 0x1b
+            30: "Wh", # 0x1e
+            33: "A", #0x21
+            35: "V", #0x23
+            255: "" # 0xff: no unit, unitless
+}
+
 
 #MQTT Init
 if useMQTT:
@@ -88,70 +107,72 @@ while 1:
         results_32 = soup.find_all('uint32')
         results_16 = soup.find_all('uint16')
         results_int16 = soup.find_all('int16')
+        results_int8 = soup.find_all('int8')
+        results_enum = soup.find_all('enum')
 
     except BaseException as err:
         print("Fehler: ", format(err))
-        continue;
+        continue
        
 
     try:
         #Wirkenergie A+ in Wattstunden
-        WirkenergiePA = str(results_32[0])
-        WirkenergieP = int(WirkenergiePA[WirkenergiePA.find('=')+2:WirkenergiePA.find('=')+10],16)
+        WirkenergieP = int(str(results_32[0].get('value')),16)*10**s8(str(results_int8[0].get('value')))
+        WirkenergiePUnit = units[int(results_enum[0].get('value'), 16)]
 
         #Wirkenergie A- in Wattstunden
-        WirkenergieNA = str(results_32[1])
-        WirkenergieN = int(WirkenergieNA[WirkenergieNA.find('=')+2:WirkenergieNA.find('=')+10],16)
+        WirkenergieN = int(str(results_32[1].get('value')),16)*10**s8(str(results_int8[1].get('value')))
+        WirkenergieNUnit = units[int(results_enum[1].get('value'), 16)]
         
         #Momentanleistung P+ in Watt
-        MomentanleistungPA = str(results_32[2])
-        MomentanleistungP = int(MomentanleistungPA[MomentanleistungPA.find('=')+2:MomentanleistungPA.find('=')+10],16)
+        MomentanleistungP = int(str(results_32[2].get('value')),16)*10**s8(str(results_int8[2].get('value')))
+        MomentanleistungPUnit = units[int(results_enum[2].get('value'), 16)]
 
         #Momentanleistung P- in Watt
-        MomentanleistungNA = str(results_32[3])
-        MomentanleistungN = int(MomentanleistungNA[MomentanleistungNA.find('=')+2:MomentanleistungNA.find('=')+10],16)
+        MomentanleistungN = int(str(results_32[3].get('value')),16)*10**s8(str(results_int8[3].get('value')))
+        MomentanleistungNUnit = units[int(results_enum[3].get('value'), 16)]
         
         #Spannung L1
-        SpannungL1A = str(results_16[0])
-        SpannungL1 = int(SpannungL1A[SpannungL1A.find('=')+2:SpannungL1A.find('=')+6],16)*0.1
+        SpannungL1 = int(str(results_16[0].get('value')),16)*10**s8(str(results_int8[4].get('value')))
+        SpannungL1Unit = units[int(results_enum[4].get('value'), 16)]
         
         #Spannung L2
-        SpannungL2A = str(results_16[1])
-        SpannungL2 = int(SpannungL2A[SpannungL2A.find('=')+2:SpannungL2A.find('=')+6],16)*0.1
+        SpannungL2 = int(str(results_16[1].get('value')),16)*10**s8(str(results_int8[5].get('value')))
+        SpannungL2Unit = units[int(results_enum[5].get('value'), 16)]
         
         #Spannung L3
-        SpannungL3A = str(results_16[2])
-        SpannungL3 = int(SpannungL3A[SpannungL3A.find('=')+2:SpannungL3A.find('=')+6],16)*0.1
+        SpannungL3 = int(str(results_16[2].get('value')),16)*10**s8(str(results_int8[6].get('value')))
+        SpannungL3Unit = units[int(results_enum[6].get('value'), 16)]
         
         #Strom L1
-        StromL1A = str(results_16[3])
-        StromL1 = int(StromL1A[StromL1A.find('=')+2:StromL1A.find('=')+6],16)*0.01
+        StromL1 = int(str(results_16[3].get('value')),16)*10**s8(str(results_int8[7].get('value')))
+        StromL1Unit = units[int(results_enum[7].get('value'), 16)]
         
         #Strom L2
-        StromL2A = str(results_16[4])
-        StromL2 = int(StromL2A[StromL2A.find('=')+2:StromL2A.find('=')+6],16)*0.01
+        StromL2 = int(str(results_16[4].get('value')),16)*10**s8(str(results_int8[8].get('value')))
+        StromL2Unit = units[int(results_enum[8].get('value'), 16)]
         
         #Strom L3
-        StromL3A = str(results_16[5])
-        StromL3 = int(StromL3A[StromL3A.find('=')+2:StromL3A.find('=')+6],16)*0.01
+        StromL3 = int(str(results_16[5].get('value')),16)*10**s8(str(results_int8[9].get('value')))
+        StromL3Unit = units[int(results_enum[9].get('value'), 16)]
         
         #Leistungsfaktor
-        LeistungsfaktorA = str(results_int16[0])
-        Leistungsfaktor = int(LeistungsfaktorA[LeistungsfaktorA.find('=')+2:LeistungsfaktorA.find('=')+6],16)*0.001
+        Leistungsfaktor = s16(str(results_int16[0].get('value')))*10**s8(str(results_int8[10].get('value')))
+        LeistungsfaktorUnit = units[int(results_enum[10].get('value'), 16)]
                         
         if printValue:
-            print('Wirkenergie+: ' + str(WirkenergieP))
-            print('Wirkenergie-: ' + str(WirkenergieN))
-            print('MomentanleistungP+: ' + str(MomentanleistungP))
-            print('MomentanleistungP-: ' + str(MomentanleistungN))
-            print('Spannung L1: ' + str(SpannungL1))
-            print('Spannung L2: ' + str(SpannungL2))
-            print('Spannung L3: ' + str(SpannungL3))
-            print('Strom L1: ' + str(StromL1))
-            print('Strom L2: ' + str(StromL2))
-            print('Strom L3: ' + str(StromL3))
-            print('Leistungsfaktor: ' + str(Leistungsfaktor))
-            print('Momentanleistung: ' + str(MomentanleistungP-MomentanleistungN))
+            print('Wirkenergie+: ' + str(WirkenergieP) + WirkenergiePUnit)
+            print('Wirkenergie-: ' + str(WirkenergieN) + WirkenergieNUnit)
+            print('Momentanleistung+: ' + str(MomentanleistungP) + MomentanleistungPUnit)
+            print('Momentanleistung-: ' + str(MomentanleistungN) + MomentanleistungNUnit)
+            print('Spannung L1: ' + str(SpannungL1) + SpannungL1Unit)
+            print('Spannung L2: ' + str(SpannungL2) + SpannungL2Unit)
+            print('Spannung L3: ' + str(SpannungL3) + SpannungL3Unit)
+            print('Strom L1: ' + str(StromL1) + StromL1Unit)
+            print('Strom L2: ' + str(StromL2) + StromL2Unit)
+            print('Strom L3: ' + str(StromL3) + StromL3Unit)
+            print('Leistungsfaktor: ' + str(Leistungsfaktor) + LeistungsfaktorUnit)
+            print('Momentanleistung: ' + str(MomentanleistungP-MomentanleistungN) + MomentanleistungPUnit)
             print()
             print()
         
@@ -172,3 +193,4 @@ while 1:
     except BaseException as err:
         print("Fehler: ", format(err))
         continue
+
