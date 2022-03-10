@@ -1,0 +1,12 @@
+{
+    "port": "/dev/ttyUSB0",
+    "baudrate": 2400,
+    "printValue": true,
+    "useMQTT": false,
+    "evn_schluessel": "################################",
+    "MQTTBroker": "192.168.1.10",
+    "MQTTuser": "",
+    "MQTTpasswort": "",
+    "MQTTport": 1883
+}
+
