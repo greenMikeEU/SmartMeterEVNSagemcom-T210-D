@@ -40,7 +40,7 @@ for conf in neededConfig:
 
 MQTTneededConfig = ['MQTTBroker', 'MQTTuser', 'MQTTpasswort', 'MQTTport']
 if config['useMQTT']:
-    for conf in neededConfig:
+    for conf in MQTTneededConfig:
         if conf not in config:
             print(conf + ' missing in config file!')
             sys.exit(3)
