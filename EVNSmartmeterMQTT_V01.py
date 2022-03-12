@@ -1,6 +1,5 @@
 import serial
 import time
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from binascii import unhexlify
 import sys
 import string
@@ -32,7 +31,7 @@ for opt, arg in opts:
         verbose = 1
 
 # config Kontrolle
-neededConfig = ['port', 'baudrate', 'printValue', 'useMQTT', 'evn_schluessel']
+neededConfig = ['port', 'baudrate', 'printValue', 'useMQTT', 'useREST', 'evn_schluessel']
 for conf in neededConfig:
     if conf not in config:
         print(conf + ' missing in config file!')
@@ -44,6 +43,13 @@ if config['useMQTT']:
         if conf not in config:
             print(conf + ' missing in config file!')
             sys.exit(3)
+
+RESTneededConfig = ['meter', 'RESTurl', 'RESTuser', 'RESTpasswort']
+if config['useREST']:
+    for conf in RESTneededConfig:
+        if conf not in config:
+            print(conf + ' missing in config file!')
+            sys.exit(4)
 
 
 # Holt Daten von serieller Schnittstelle
@@ -87,6 +93,11 @@ if config['useMQTT']:
     except:
         print("Die Ip Adresse des Brokers ist falsch!")
         sys.exit()
+
+# REST API
+if config['useREST']:
+    import requests
+    from requests.auth import HTTPBasicAuth
 
     
 tr = GXDLMSTranslator(TranslatorOutputType.SIMPLE_XML)
@@ -213,6 +224,41 @@ while 1:
             client.publish("Smartmeter/StromL2",StromL2)
             client.publish("Smartmeter/StromL3",StromL3)
             client.publish("Smartmeter/Leistungsfaktor",Leistungsfaktor)
+
+        # REST API
+        if config['useREST']:
+            dataJson = {}
+            dataJson['meter'] = config['meter']
+            dataJson['data'] = {}
+            dataJson['data']['WirkenergieP'] = WirkenergieP
+            dataJson['data']['WirkenergieN'] = WirkenergieN
+            dataJson['data']['MomentanleistungP'] = MomentanleistungP
+            dataJson['data']['MomentanleistungN'] = MomentanleistungN
+            dataJson['data']['SpannungL1'] = SpannungL1
+            dataJson['data']['SpannungL2'] = SpannungL2
+            dataJson['data']['SpannungL3'] = SpannungL3
+            dataJson['data']['StromL1'] = StromL1
+            dataJson['data']['StromL2'] = StromL2
+            dataJson['data']['StromL3'] = StromL3
+            dataJson['data']['Leistungsfaktor'] = Leistungsfaktor
+            jsonStr = json.dumps(dataJson)
+
+            if verbose:
+                print(jsonStr+"\n")
+
+            url = config['RESTurl']
+
+            resp = requests.post(url, data = jsonStr, auth = HTTPBasicAuth(config['RESTuser'], config['RESTpass']))
+            if resp.status_code != 200:
+                print('Error while sending to REST API:')
+                print(jsonStr)
+                print('Status Code: ' + str(resp.status_code))
+                print(resp.text)
+
+            if verbose:
+                print("HTTP Resp Code: " + str(resp.status_code) + "\n")
+                print(resp.text)
+
     except BaseException as err:
         print("Fehler: ", format(err))
         continue
