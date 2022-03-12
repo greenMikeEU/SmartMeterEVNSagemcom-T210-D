@@ -97,6 +97,9 @@ serIn = serial.Serial( port=config['port'],
          stopbits=serial.STOPBITS_ONE
 )
 
+if serIn.isOpen() == True:
+    print("Port is already in use!")
+    sys.exit(3)
 
 while 1:
     sleep(4.7)
