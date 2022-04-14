@@ -18,7 +18,7 @@ from gurux_dlms.TranslatorOutputType import TranslatorOutputType
 evn_schluessel = "EVN Schlüssel"
 
 #MQTT Verwenden (True | False)
-useMQTT = True
+useMQTT = False
 
 #MQTT Broker IP adresse Eingeben ohne Port!
 mqttBroker = "192.168.1.10"

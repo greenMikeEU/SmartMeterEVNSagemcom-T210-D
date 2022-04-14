@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup
 evn_schluessel = "dein EVN Schlüssel"
 
 #MQTT Verwenden (True | False)
-useMQTT = True
+useMQTT = False
 
 #MQTT Broker IP adresse Eingeben ohne Port!
 mqttBroker = "192.168.1.10"
