@@ -2,35 +2,56 @@
 
 import serial
 import time
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from binascii import unhexlify
 import sys
 import string
-import paho.mqtt.client as mqtt
 from gurux_dlms.GXDLMSTranslator import GXDLMSTranslator
 from bs4 import BeautifulSoup
 from Cryptodome.Cipher import AES
 from time import sleep
 from gurux_dlms.TranslatorOutputType import TranslatorOutputType
 
+import json
+import os
+import getopt
 
-# EVN Schlüssel eingeben zB. "36C66639E48A8CA4D6BC8B282A793BBB"
-evn_schluessel = "EVN Schlüssel"
+try:
+	configFile = open(os.path.dirname(os.path.realpath(__file__)) + '/config.json')
+	config = json.load(configFile)
+except:
+	print("config.json file not found!")
+	sys.exit(1)
 
-#MQTT Verwenden (True | False)
-useMQTT = False
+verbose = 0
+try:
+    opts, args = getopt.getopt(sys.argv[1:],"v")
+except getopt.GetoptError:
+    print('test.py [-v]')
+    sys.exit(2)
+for opt, arg in opts:
+    if opt == '-v':
+        verbose = 1
 
-#MQTT Broker IP adresse Eingeben ohne Port!
-mqttBroker = "192.168.1.10"
-mqttuser =""
-mqttpasswort = ""
-mqttport = 1883
+# config Kontrolle
+neededConfig = ['port', 'baudrate', 'printValue', 'useMQTT', 'useREST', 'evn_schluessel']
+for conf in neededConfig:
+    if conf not in config:
+        print(conf + ' missing in config file!')
+        sys.exit(3)
 
-#Comport Config/Init
-comport = "/dev/ttyUSB0"
+MQTTneededConfig = ['MQTTBroker', 'MQTTuser', 'MQTTpasswort', 'MQTTport']
+if config['useMQTT']:
+    for conf in MQTTneededConfig:
+        if conf not in config:
+            print(conf + ' missing in config file!')
+            sys.exit(3)
 
-#Aktulle Werte auf Console ausgeben (True | False)
-printValue = True
+RESTneededConfig = ['meter', 'RESTurl', 'RESTuser', 'RESTpasswort']
+if config['useREST']:
+    for conf in RESTneededConfig:
+        if conf not in config:
+            print(conf + ' missing in config file!')
+            sys.exit(4)
 
 
 # Holt Daten von serieller Schnittstelle
@@ -65,40 +86,53 @@ units = {
 
 
 #MQTT Init
-if useMQTT:
+if config['useMQTT']:
+    import paho.mqtt.client as mqtt
     try:
         client = mqtt.Client("SmartMeter")
-        client.username_pw_set(mqttuser, mqttpasswort)
-        client.connect(mqttBroker, mqttport)
+        client.username_pw_set(config['mqttuser'], config['mqttpasswort'])
+        client.connect(config['mqttBroker'], config['mqttport'])
     except:
         print("Die Ip Adresse des Brokers ist falsch!")
         sys.exit()
 
+# REST API
+if config['useREST']:
+    import requests
+    from requests.auth import HTTPBasicAuth
+
     
 tr = GXDLMSTranslator(TranslatorOutputType.SIMPLE_XML)
-serIn = serial.Serial( port=comport,
-         baudrate=2400,
+serIn = serial.Serial( port=config['port'],
+         baudrate=config['baudrate'],
          bytesize=serial.EIGHTBITS,
          parity=serial.PARITY_NONE,
          stopbits=serial.STOPBITS_ONE
 )
 
+if serIn.isOpen() == True:
+    print("Port is already in use!")
+    sys.exit(3)
 
 while 1:
     sleep(4.7)
     daten = recv(serIn)
     if daten != '':
         daten = daten.hex()
-    if (daten == '' or daten[0:8] != "68010168"):
-        print ("Invalid Start Bytes... waiting")
+    if (len(daten) < 560):
+        if verbose:
+            print("Only " + str(len(daten)) + " bytes received... waiting")
+        continue
+    if daten == '' or daten[0:8] != "68010168":
+        if verbose:
+            print ("Invalid Start Bytes... waiting")
         continue
     systemTitel = daten[22:38]
     frameCounter = daten[44:52]
     frame = daten[52:560]
-    
 
     frame = unhexlify(frame)
-    encryption_key = unhexlify(evn_schluessel)
+    encryption_key = unhexlify(config['evn_schluessel'])
     init_vector = unhexlify(systemTitel + frameCounter)
     cipher = AES.new(encryption_key, AES.MODE_GCM, nonce=init_vector)
     apdu = cipher.decrypt(frame).hex()    
@@ -162,7 +196,7 @@ while 1:
         Leistungsfaktor = s16(str(results_int16[0].get('value')))*10**s8(str(results_int8[10].get('value')))
         LeistungsfaktorUnit = units[int(results_enum[10].get('value'), 16)]
                         
-        if printValue:
+        if config['printValue'] or verbose:
             print('Wirkenergie+: ' + str(WirkenergieP) + WirkenergiePUnit)
             print('Wirkenergie-: ' + str(WirkenergieN) + WirkenergieNUnit)
             print('Momentanleistung+: ' + str(MomentanleistungP) + MomentanleistungPUnit)
@@ -179,7 +213,7 @@ while 1:
             print()
         
         #MQTT
-        if useMQTT:
+        if config['useMQTT']:
             client.publish("Smartmeter/WirkenergieP",WirkenergieP)
             client.publish("Smartmeter/WirkenergieN",WirkenergieN)
             client.publish("Smartmeter/MomentanleistungP",MomentanleistungP)
@@ -192,6 +226,41 @@ while 1:
             client.publish("Smartmeter/StromL2",StromL2)
             client.publish("Smartmeter/StromL3",StromL3)
             client.publish("Smartmeter/Leistungsfaktor",Leistungsfaktor)
+
+        # REST API
+        if config['useREST']:
+            dataJson = {}
+            dataJson['meter'] = config['meter']
+            dataJson['data'] = {}
+            dataJson['data']['WirkenergieP'] = WirkenergieP
+            dataJson['data']['WirkenergieN'] = WirkenergieN
+            dataJson['data']['MomentanleistungP'] = MomentanleistungP
+            dataJson['data']['MomentanleistungN'] = MomentanleistungN
+            dataJson['data']['SpannungL1'] = SpannungL1
+            dataJson['data']['SpannungL2'] = SpannungL2
+            dataJson['data']['SpannungL3'] = SpannungL3
+            dataJson['data']['StromL1'] = StromL1
+            dataJson['data']['StromL2'] = StromL2
+            dataJson['data']['StromL3'] = StromL3
+            dataJson['data']['Leistungsfaktor'] = Leistungsfaktor
+            jsonStr = json.dumps(dataJson)
+
+            if verbose:
+                print(jsonStr+"\n")
+
+            url = config['RESTurl']
+
+            resp = requests.post(url, data = jsonStr, auth = HTTPBasicAuth(config['RESTuser'], config['RESTpass']))
+            if resp.status_code != 200:
+                print('Error while sending to REST API:')
+                print(jsonStr)
+                print('Status Code: ' + str(resp.status_code))
+                print(resp.text)
+
+            if verbose:
+                print("HTTP Resp Code: " + str(resp.status_code) + "\n")
+                print(resp.text)
+
     except BaseException as err:
         print("Fehler: ", format(err))
         continue

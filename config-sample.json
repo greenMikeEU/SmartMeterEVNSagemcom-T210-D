@@ -1,0 +1,17 @@
+{
+    "port": "/dev/ttyUSB0",
+    "baudrate": 2400,
+    "printValue": true,
+    "useMQTT": false,
+    "useREST": false,
+    "evn_schluessel": "################################",
+    "meter": "ID_of_meter",
+    "MQTTBroker": "192.168.1.10",
+    "MQTTuser": "",
+    "MQTTpasswort": "",
+    "MQTTport": 1883,
+    "RESTurl": "https://my.host.at/send/to/API",
+    "RESTuser": "username",
+    "RESTpass": "###PASSWORD###"
+}
+
