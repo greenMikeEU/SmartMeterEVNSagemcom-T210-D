@@ -1,5 +1,6 @@
 import serial
 import time
+from random import random
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from binascii import unhexlify
 import sys
@@ -72,10 +73,15 @@ while 1:
         results_16 = soup.find_all('uint16')
         results_int16 = soup.find_all('int16')
     except Exception as err:
-        print("Fehler beim Synchronisieren. Programm bitte ein weiteres mal Starten.")
+        print("Synchronisierungsfehler: Neuer Versuch wird gestartet")
         print()
         print("Fehler: ", format(err))
-        sys.exit()
+        print()
+        ser.flushOutput()
+        ser.close()
+        ser.open()
+        time.sleep(1 + random())
+        continue
        
 
     
@@ -158,9 +164,12 @@ while 1:
             client.publish("Smartmeter/StromL3",StromL3)
             client.publish("Smartmeter/Leistungsfaktor",Leistungsfaktor)
     except BaseException as err:
-        print("Fehler beim Synchronisieren. Programm bitte ein weiteres mal Starten.")
+        print("Synchronisierungsfehler: Neuer Versuch wird gestartet")
         print()
         print("Fehler: ", format(err))
-
-        sys.exit()
-
+        print()
+        ser.flushOutput()
+        ser.close()
+        ser.open()
+        time.sleep(1 + random())
+        continue
