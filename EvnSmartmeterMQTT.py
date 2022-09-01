@@ -68,7 +68,7 @@ while 1:
     
     try:
         xml = tr.pduToXml(apdu[:-32],)
-        soup = BeautifulSoup(xml, 'lxml')
+        soup = BeautifulSoup(xml, 'lxml')  # 'lxml' ODER 'html.parser' verwenden
         results_32 = soup.find_all('uint32')
         results_16 = soup.find_all('uint16')
         results_int16 = soup.find_all('int16')
