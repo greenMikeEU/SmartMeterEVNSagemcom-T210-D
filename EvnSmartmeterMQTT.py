@@ -57,7 +57,7 @@ daten = ""
 
 while 1:
     sleep(.25)
-    stream += recv(serIn).hex()
+    stream += ser.read(size=280).hex()
     spos = stream.find("68010168")
     if spos != -1:
         stream = stream[spos:]
