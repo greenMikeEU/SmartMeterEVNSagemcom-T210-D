@@ -7,6 +7,7 @@ import string
 import paho.mqtt.client as mqtt
 from gurux_dlms.GXDLMSTranslator import GXDLMSTranslator
 from bs4 import BeautifulSoup
+from time import sleep
 
 # EVN Schlüssel eingeben zB. "36C66639E48A8CA4D6BC8B282A793BBB"
 evn_schluessel = "dein EVN Schlüssel"
@@ -51,8 +52,24 @@ ser = serial.Serial( port=comport,
 
 
 
+stream = ""
+daten = ""
+
 while 1:
-    daten = ser.read(size=282).hex()
+    sleep(.25)
+    stream += recv(serIn).hex()
+    spos = stream.find("68010168")
+    if spos != -1:
+        stream = stream[spos:]
+        if len(stream) < 560 : continue
+        daten = stream[:560]
+        stream = stream[560:] 
+    else:
+        if len(stream) > (560 * 10) : 
+            print ("Missing Start Bytes... waiting")
+            stream = ""
+        continue
+
     systemTitel = daten[22:38]
     frameCounter = daten[44:52]
     frame = daten[52:560]
