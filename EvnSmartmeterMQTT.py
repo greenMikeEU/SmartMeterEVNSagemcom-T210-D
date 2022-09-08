@@ -173,7 +173,10 @@ while 1:
             client.publish("Smartmeter/StromL1",StromL1)
             client.publish("Smartmeter/StromL2",StromL2)
             client.publish("Smartmeter/StromL3",StromL3)
-            client.publish("Smartmeter/Leistungsfaktor",Leistungsfaktor)
+            if client.publish("Smartmeter/Leistungsfaktor",Leistungsfaktor)[0] != 0 :
+                print("Publish fehlgeschlagen!")
+                client.connect(mqttBroker, mqttport)
+
     except BaseException as err:
         print("Fehler beim Synchronisieren. Programm bitte ein weiteres mal Starten.")
         print()
