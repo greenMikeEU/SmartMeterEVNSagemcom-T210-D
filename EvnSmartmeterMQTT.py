@@ -176,6 +176,7 @@ while 1:
             if client.publish("Smartmeter/Leistungsfaktor",Leistungsfaktor)[0] != 0 :
                 print("Publish fehlgeschlagen!")
                 client.connect(mqttBroker, mqttport)
+                continue
 
     except BaseException as err:
         print("Fehler beim Synchronisieren. Programm bitte ein weiteres mal Starten.")
