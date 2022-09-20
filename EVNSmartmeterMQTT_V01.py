@@ -1,11 +1,18 @@
+import logging
 import serial
 import time
+from time import mktime
+from datetime import datetime
+from datetime import timedelta
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from binascii import unhexlify
 import sys
 import string
 import paho.mqtt.client as mqtt
 from gurux_dlms.GXDLMSTranslator import GXDLMSTranslator
+from gurux_dlms.GXDLMSClient import GXDLMSClient
+from gurux_dlms.GXDateTime import GXDateTime
+from gurux_dlms.enums import DataType
 from bs4 import BeautifulSoup
 from Cryptodome.Cipher import AES
 from time import sleep
@@ -30,6 +37,44 @@ comport = "/dev/ttyUSB0"
 #Aktulle Werte auf Console ausgeben (True | False)
 printValue = True
 
+# Anpassen wohin das Logging erfolgen soll: Paramter 'filename' als absoluter Pfad
+logging.basicConfig(filename='/var/log/smartmeter_T210-D.log', format='%(asctime)s %(message)s', encoding='utf-8', level=logging.INFO)
+
+# Flag ob die Verbindung zum MQTT Broker steht - NICHT ÄNDERN!
+mqtt_connected = False
+
+# MQTT Client Name kann hier angepasst werden
+client = mqtt.Client("SmartMeter")
+
+#=====================================================================
+# Ab hier keine Änderungen mehr vornehmen (außer du weißt was du tust)
+# Do not change content below (exept you know what you are doing)
+#=====================================================================
+
+# MQTT Client Callback für connect
+def on_connect(client, userdata, flags, rc):
+    global mqtt_connected
+    mqtt_connected = True
+    logging.info('Connected to MQTT ' + mqttuser + '@' + mqttBroker + ':' + str(mqttport))
+
+# MQTT Client Callback für disconnect
+def on_disconnect(client, userdata, rc):
+    global mqtt_connected
+    mqtt_connected = False
+    logging.info('Disconnected from MQTT Broker')
+
+# Verbindet zum MQTT Broker
+def mqtt_connect():
+    try:
+        client.reinitialise("SmartMeter")
+        client.on_connect = on_connect
+        client.on_disconnect = on_disconnect
+        client.username_pw_set(mqttuser, mqttpasswort)
+        client.connect(mqttBroker, mqttport)
+        client.loop()
+    except Exception as e:
+        logging.error('Can not connect to MQTT Broker using ' + mqttuser + '@' + mqttBroker + ':' + str(mqttport) + ' : ' +str(e))
+        # Note: connection exception is no reason for a System exit - the next try will be done in the next loop
 
 # Holt Daten von serieller Schnittstelle
 def recv(serialIncoming):
@@ -54,52 +99,48 @@ def s8(value):
 # DLMS Blue Book Page 52
 # https://www.dlms.com/files/Blue_Book_Edition_13-Excerpt.pdf
 units = {
-            27: "W", # 0x1b
-            30: "Wh", # 0x1e
-            33: "A", #0x21
-            35: "V", #0x23
-            255: "" # 0xff: no unit, unitless
+    27: "W", # 0x1b
+    30: "Wh", # 0x1e
+    33: "A", #0x21
+    35: "V", #0x23
+    255: "" # 0xff: no unit, unitless
 }
 
+logging.info('Smartmeter service started')
 
-#MQTT Init
-if useMQTT:
-    try:
-        client = mqtt.Client("SmartMeter")
-        client.username_pw_set(mqttuser, mqttpasswort)
-        client.connect(mqttBroker, mqttport)
-    except:
-        print("Die Ip Adresse des Brokers ist falsch!")
-        sys.exit()
 
-    
 tr = GXDLMSTranslator(TranslatorOutputType.SIMPLE_XML)
 serIn = serial.Serial( port=comport,
-         baudrate=2400,
-         bytesize=serial.EIGHTBITS,
-         parity=serial.PARITY_NONE,
-         stopbits=serial.STOPBITS_ONE
-)
+                       baudrate=2400,
+                       bytesize=serial.EIGHTBITS,
+                       parity=serial.PARITY_NONE,
+                       stopbits=serial.STOPBITS_ONE
+                       )
 
-
+# Endless Loop
 while 1:
+    # Reconnect zum MQTT Broker falls nötig
+    if (useMQTT and (not mqtt_connected)):
+        mqtt_connect()
+
+    # Der T210-D Smartmeter sendet von sich aus alle 10sec ein Datenpaket
     sleep(4.7)
     daten = recv(serIn)
     if daten != '':
         daten = daten.hex()
     if (daten == '' or daten[0:8] != "68010168"):
-        print ("Invalid Start Bytes... waiting")
+        logging.debug('Invalid Start Bytes... waiting')
         continue
     systemTitel = daten[22:38]
     frameCounter = daten[44:52]
     frame = daten[52:560]
-    
+
 
     frame = unhexlify(frame)
     encryption_key = unhexlify(evn_schluessel)
     init_vector = unhexlify(systemTitel + frameCounter)
     cipher = AES.new(encryption_key, AES.MODE_GCM, nonce=init_vector)
-    apdu = cipher.decrypt(frame).hex()    
+    apdu = cipher.decrypt(frame).hex()
 
     try:
         xml = tr.pduToXml(apdu,)
@@ -109,13 +150,21 @@ while 1:
         results_int16 = soup.find_all('int16')
         results_int8 = soup.find_all('int8')
         results_enum = soup.find_all('enum')
+        results_datetime = soup.find_all('datetime')
 
     except BaseException as err:
-        print("Fehler: ", format(err))
+        logging.error("Error: ", format(err))
         continue
-       
 
     try:
+        #Zeitstempel der Messwerte
+        GxZeitstempel = GXDLMSClient.changeType(str(results_datetime[0].get('value')), DataType.DATETIME)
+        Zeitstempel = datetime.fromtimestamp(mktime(GXDateTime.toUnixTime(GxZeitstempel)))
+        if time.localtime().tm_isdst:
+            # Correct Daylight Saving hour
+            Zeitstempel = Zeitstempel + timedelta(hours=1)
+        ZeitstempelStr = Zeitstempel.strftime("%Y.%m.%d %H:%M:%S")
+
         #Wirkenergie A+ in Wattstunden
         WirkenergieP = int(str(results_32[0].get('value')),16)*10**s8(str(results_int8[0].get('value')))
         WirkenergiePUnit = units[int(results_enum[0].get('value'), 16)]
@@ -123,7 +172,7 @@ while 1:
         #Wirkenergie A- in Wattstunden
         WirkenergieN = int(str(results_32[1].get('value')),16)*10**s8(str(results_int8[1].get('value')))
         WirkenergieNUnit = units[int(results_enum[1].get('value'), 16)]
-        
+
         #Momentanleistung P+ in Watt
         MomentanleistungP = int(str(results_32[2].get('value')),16)*10**s8(str(results_int8[2].get('value')))
         MomentanleistungPUnit = units[int(results_enum[2].get('value'), 16)]
@@ -131,36 +180,37 @@ while 1:
         #Momentanleistung P- in Watt
         MomentanleistungN = int(str(results_32[3].get('value')),16)*10**s8(str(results_int8[3].get('value')))
         MomentanleistungNUnit = units[int(results_enum[3].get('value'), 16)]
-        
+
         #Spannung L1
         SpannungL1 = int(str(results_16[0].get('value')),16)*10**s8(str(results_int8[4].get('value')))
         SpannungL1Unit = units[int(results_enum[4].get('value'), 16)]
-        
+
         #Spannung L2
         SpannungL2 = int(str(results_16[1].get('value')),16)*10**s8(str(results_int8[5].get('value')))
         SpannungL2Unit = units[int(results_enum[5].get('value'), 16)]
-        
+
         #Spannung L3
         SpannungL3 = int(str(results_16[2].get('value')),16)*10**s8(str(results_int8[6].get('value')))
         SpannungL3Unit = units[int(results_enum[6].get('value'), 16)]
-        
+
         #Strom L1
         StromL1 = int(str(results_16[3].get('value')),16)*10**s8(str(results_int8[7].get('value')))
         StromL1Unit = units[int(results_enum[7].get('value'), 16)]
-        
+
         #Strom L2
         StromL2 = int(str(results_16[4].get('value')),16)*10**s8(str(results_int8[8].get('value')))
         StromL2Unit = units[int(results_enum[8].get('value'), 16)]
-        
+
         #Strom L3
         StromL3 = int(str(results_16[5].get('value')),16)*10**s8(str(results_int8[9].get('value')))
         StromL3Unit = units[int(results_enum[9].get('value'), 16)]
-        
+
         #Leistungsfaktor
         Leistungsfaktor = s16(str(results_int16[0].get('value')))*10**s8(str(results_int8[10].get('value')))
         LeistungsfaktorUnit = units[int(results_enum[10].get('value'), 16)]
-                        
+
         if printValue:
+            print('Zeitstempel: ' + ZeitstempelStr)
             print('Wirkenergie+: ' + str(WirkenergieP) + WirkenergiePUnit)
             print('Wirkenergie-: ' + str(WirkenergieN) + WirkenergieNUnit)
             print('Momentanleistung+: ' + str(MomentanleistungP) + MomentanleistungPUnit)
@@ -175,9 +225,10 @@ while 1:
             print('Momentanleistung: ' + str(MomentanleistungP-MomentanleistungN) + MomentanleistungPUnit)
             print()
             print()
-        
-        #MQTT
+
+        # MQTT Versand der Werte
         if useMQTT:
+            client.publish("Smartmeter/Zeitstempel",ZeitstempelStr)
             client.publish("Smartmeter/WirkenergieP",WirkenergieP)
             client.publish("Smartmeter/WirkenergieN",WirkenergieN)
             client.publish("Smartmeter/MomentanleistungP",MomentanleistungP)
@@ -190,7 +241,7 @@ while 1:
             client.publish("Smartmeter/StromL2",StromL2)
             client.publish("Smartmeter/StromL3",StromL3)
             client.publish("Smartmeter/Leistungsfaktor",Leistungsfaktor)
+            client.loop();
     except BaseException as err:
-        print("Fehler: ", format(err))
+        logging.error("Fehler: ", format(err))
         continue
-
