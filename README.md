@@ -42,3 +42,53 @@ Additionally you need unpackaged python packages:
 ```shell
 pip install gurux_dlms
 ```
+
+## Als user systemd service laufen lassen
+
+Man kann das script auch via ein user systemd service laufen lassen. Hierzu ist es notwedig, dem User als erstes das Ausführen von systemd services auch ohne Anmeldung zu gestatten (https://wiki.archlinux.org/title/Systemd/User#Automatic_start-up_of_systemd_user_instances):
+
+```sh
+sudo loginctl enable-linger username
+```
+
+Dann muss das notwendige Verzeichnis erstellt werden:
+```sh
+mkdir -p ~/.config/systemd/user/
+```
+
+Und die systemd service unit (evn_smartmeter.service):
+
+```
+[Unit]
+Description=EVN SmartMonitor
+Documentation=https://github.com/greenMikeEU/SmartMeterEVNSagemcom-T210-D
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=/home/pkolmann/SmartMeterEVNSagemcom-T210-D
+ExecStart=/usr/bin/python3 ./EVNSmartmeterMQTT_V01.py
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target
+```
+
+Zum Abschluss muss der systemd daemon die neue config laden, enablen und starten:
+
+```sh
+systemctl --user daemon-reload
+systemctl --user enable evn_smartmeter.service
+systemctl --user start evn_smartmeter.service
+```
+
+Zur Kontrolle, ob das Service läuft kann man den Status abfragen:
+```sh
+systemctl --user status evn_smartmeter.service
+```
+
+bzw. das Journal ansehen:
+```sh
+journalctl --user-unit evn_smartmeter.service
+```
