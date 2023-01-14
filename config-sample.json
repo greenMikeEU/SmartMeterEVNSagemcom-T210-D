@@ -4,6 +4,8 @@
     "printValue": true,
     "useMQTT": false,
     "useREST": false,
+    "exit_after_success_DOKU": "set to true to exit after one successful run. Can be useful if run by cron",
+    "exit_after_success": false,
     "evn_schluessel": "################################",
     "meter": "ID_of_meter",
     "MQTTBroker": "192.168.1.10",

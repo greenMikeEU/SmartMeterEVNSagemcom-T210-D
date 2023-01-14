@@ -30,3 +30,15 @@ Spendenlink: https://www.paypal.me/greenMikeEU
 ## License
 
 This project is licensed under the GNU General Public License v3.0 License - see the LICENSE.md file for details
+
+## Benötigte Python Pakete
+
+Unter Debian kann man die benötigten Python Pakete wie folgt installieren:
+```shell
+apt install python3-serial python3-pycryptodome python3-pip
+```
+
+Additionally you need unpackaged python packages:
+```shell
+pip install gurux_dlms
+```
