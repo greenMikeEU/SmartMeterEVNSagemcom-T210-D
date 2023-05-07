@@ -101,6 +101,17 @@ while 1:
     cipher = AES.new(encryption_key, AES.MODE_GCM, nonce=init_vector)
     apdu = cipher.decrypt(frame).hex()    
 
+    #MQTT
+    if useMQTT:
+        connected = False
+        while not connected:
+            try:
+                client.reconnect()
+                connected = True
+            except:
+                print("Lost Connection to MQTT...Trying to reconnect in 2 Seconds")
+                time.sleep(2)
+
     try:
         xml = tr.pduToXml(apdu,)
         soup = BeautifulSoup(xml, 'lxml')
