@@ -125,6 +125,17 @@ while 1:
                 print("MQTT-Verbindung verloren: Warte 2 Sekunden...")
                 sleep(2)
 
+    #MQTT
+    if useMQTT:
+        connected = False
+        while not connected:
+            try:
+                client.reconnect()
+                connected = True
+            except:
+                print("Lost Connection to MQTT...Trying to reconnect in 2 Seconds")
+                time.sleep(2)
+
     try:
         xml = tr.pduToXml(apdu, )
         root = ET.fromstring(xml)
