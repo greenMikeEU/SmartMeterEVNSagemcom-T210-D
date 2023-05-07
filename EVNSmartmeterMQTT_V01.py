@@ -1,13 +1,11 @@
+from random import random
 import serial
-import time
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from binascii import unhexlify
 import sys
-import string
 import paho.mqtt.client as mqtt
-from gurux_dlms.GXDLMSTranslator import GXDLMSTranslator
-from bs4 import BeautifulSoup
+import xml.etree.ElementTree as ET
 from Cryptodome.Cipher import AES
+from gurux_dlms.GXDLMSTranslator import GXDLMSTranslator
 from time import sleep
 from gurux_dlms.TranslatorOutputType import TranslatorOutputType
 
@@ -39,7 +37,6 @@ def recv(serialIncoming):
             continue
         else:
             break
-        sleep(0.5)
     return data
 
 # Konvertiert Signed Ints
@@ -68,8 +65,8 @@ if useMQTT:
         client = mqtt.Client("SmartMeter")
         client.username_pw_set(mqttuser, mqttpasswort)
         client.connect(mqttBroker, mqttport)
-    except:
-        print("Die Ip Adresse des Brokers ist falsch!")
+    except Exception as e:
+        print("Die IP-Adresse des Brokers ist falsch!")
         sys.exit()
 
     
@@ -81,115 +78,88 @@ serIn = serial.Serial( port=comport,
          stopbits=serial.STOPBITS_ONE
 )
 
+octet_string_values = {
+    '0100010800FF': 'WirkenergieP',
+    '0100020800FF': 'WirkenergieN',
+    '0100010700FF': 'MomentanleistungP',
+    '0100020700FF': 'MomentanleistungN',
+    '0100200700FF': 'SpannungL1',
+    '0100340700FF': 'SpannungL2',
+    '0100480700FF': 'SpannungL3',
+    '01001F0700FF': 'StromL1',
+    '0100330700FF': 'StromL2',
+    '0100470700FF': 'StromL3',
+    '01000D0700FF': 'Leistungsfaktor'
+}
+
 
 while 1:
     sleep(4.7)
     daten = recv(serIn)
+
     if daten != '':
         daten = daten.hex()
-    if (daten == '' or daten[0:8] != "68010168"):
+
+    if daten == '' or daten[0:8] != "68fafa68":
         print ("Invalid Start Bytes... waiting")
         continue
+
     systemTitel = daten[22:38]
     frameCounter = daten[44:52]
-    frame = daten[52:560]
-    
+    frame = daten[52:512]
 
     frame = unhexlify(frame)
     encryption_key = unhexlify(evn_schluessel)
     init_vector = unhexlify(systemTitel + frameCounter)
     cipher = AES.new(encryption_key, AES.MODE_GCM, nonce=init_vector)
-    apdu = cipher.decrypt(frame).hex()    
+    apdu = cipher.decrypt(frame).hex()
+
+    #MQTT
+    if useMQTT:
+        connected = False
+        while not connected:
+            try:
+                client.reconnect()
+                connected = True
+            except Exception as e:
+                print("MQTT-Verbindung verloren: Warte 2 Sekunden...")
+                sleep(2)
 
     try:
-        xml = tr.pduToXml(apdu,)
-        soup = BeautifulSoup(xml, 'lxml')
-        results_32 = soup.find_all('uint32')
-        results_16 = soup.find_all('uint16')
-        results_int16 = soup.find_all('int16')
-        results_int8 = soup.find_all('int8')
-        results_enum = soup.find_all('enum')
+        xml = tr.pduToXml(apdu, )
+        root = ET.fromstring(xml)
+        found_lines = {}
 
-    except BaseException as err:
+        items = list(root.iter())
+        for i, child in enumerate(items):
+            if child.tag == 'OctetString' and 'Value' in child.attrib:
+                value = child.attrib['Value']
+                if value in octet_string_values.keys():
+                    if 'Value' in items[i + 1].attrib:
+                        found_lines[octet_string_values[value]] = int(items[i+1].attrib['Value'], 16)
+
+    except Exception as err:
+        print("Synchronisierungsfehler PDU: Warte auf neue Daten...")
+        print()
         print("Fehler: ", format(err))
+        serIn.flushOutput()
+        serIn.close()
+        serIn.open()
+        sleep(1 + random())
         continue
-       
 
     try:
-        #Wirkenergie A+ in Wattstunden
-        WirkenergieP = int(str(results_32[0].get('value')),16)*10**s8(str(results_int8[0].get('value')))
-        WirkenergiePUnit = units[int(results_enum[0].get('value'), 16)]
+        if {'MomentanleistungP', 'MomentanleistungN'}.issubset(found_lines.keys()):
+            found_lines['Momentanleistung'] = found_lines['MomentanleistungP'] - found_lines['MomentanleistungN']
 
-        #Wirkenergie A- in Wattstunden
-        WirkenergieN = int(str(results_32[1].get('value')),16)*10**s8(str(results_int8[1].get('value')))
-        WirkenergieNUnit = units[int(results_enum[1].get('value'), 16)]
-        
-        #Momentanleistung P+ in Watt
-        MomentanleistungP = int(str(results_32[2].get('value')),16)*10**s8(str(results_int8[2].get('value')))
-        MomentanleistungPUnit = units[int(results_enum[2].get('value'), 16)]
+        for key, value in found_lines.items():
+            if printValue:
+                print(key, ':', found_lines[key])
+            if useMQTT:
+                client.publish("Smartmeter/" + key, found_lines['WirkenergieP'])
 
-        #Momentanleistung P- in Watt
-        MomentanleistungN = int(str(results_32[3].get('value')),16)*10**s8(str(results_int8[3].get('value')))
-        MomentanleistungNUnit = units[int(results_enum[3].get('value'), 16)]
-        
-        #Spannung L1
-        SpannungL1 = int(str(results_16[0].get('value')),16)*10**s8(str(results_int8[4].get('value')))
-        SpannungL1Unit = units[int(results_enum[4].get('value'), 16)]
-        
-        #Spannung L2
-        SpannungL2 = int(str(results_16[1].get('value')),16)*10**s8(str(results_int8[5].get('value')))
-        SpannungL2Unit = units[int(results_enum[5].get('value'), 16)]
-        
-        #Spannung L3
-        SpannungL3 = int(str(results_16[2].get('value')),16)*10**s8(str(results_int8[6].get('value')))
-        SpannungL3Unit = units[int(results_enum[6].get('value'), 16)]
-        
-        #Strom L1
-        StromL1 = int(str(results_16[3].get('value')),16)*10**s8(str(results_int8[7].get('value')))
-        StromL1Unit = units[int(results_enum[7].get('value'), 16)]
-        
-        #Strom L2
-        StromL2 = int(str(results_16[4].get('value')),16)*10**s8(str(results_int8[8].get('value')))
-        StromL2Unit = units[int(results_enum[8].get('value'), 16)]
-        
-        #Strom L3
-        StromL3 = int(str(results_16[5].get('value')),16)*10**s8(str(results_int8[9].get('value')))
-        StromL3Unit = units[int(results_enum[9].get('value'), 16)]
-        
-        #Leistungsfaktor
-        Leistungsfaktor = s16(str(results_int16[0].get('value')))*10**s8(str(results_int8[10].get('value')))
-        LeistungsfaktorUnit = units[int(results_enum[10].get('value'), 16)]
-                        
-        if printValue:
-            print('Wirkenergie+: ' + str(WirkenergieP) + WirkenergiePUnit)
-            print('Wirkenergie-: ' + str(WirkenergieN) + WirkenergieNUnit)
-            print('Momentanleistung+: ' + str(MomentanleistungP) + MomentanleistungPUnit)
-            print('Momentanleistung-: ' + str(MomentanleistungN) + MomentanleistungNUnit)
-            print('Spannung L1: ' + str(SpannungL1) + SpannungL1Unit)
-            print('Spannung L2: ' + str(SpannungL2) + SpannungL2Unit)
-            print('Spannung L3: ' + str(SpannungL3) + SpannungL3Unit)
-            print('Strom L1: ' + str(StromL1) + StromL1Unit)
-            print('Strom L2: ' + str(StromL2) + StromL2Unit)
-            print('Strom L3: ' + str(StromL3) + StromL3Unit)
-            print('Leistungsfaktor: ' + str(Leistungsfaktor) + LeistungsfaktorUnit)
-            print('Momentanleistung: ' + str(MomentanleistungP-MomentanleistungN) + MomentanleistungPUnit)
-            print()
-            print()
-        
-        #MQTT
-        if useMQTT:
-            client.publish("Smartmeter/WirkenergieP",WirkenergieP)
-            client.publish("Smartmeter/WirkenergieN",WirkenergieN)
-            client.publish("Smartmeter/MomentanleistungP",MomentanleistungP)
-            client.publish("Smartmeter/MomentanleistungN",MomentanleistungN)
-            client.publish("Smartmeter/Momentanleistung",MomentanleistungP - MomentanleistungN)
-            client.publish("Smartmeter/SpannungL1",SpannungL1)
-            client.publish("Smartmeter/SpannungL2",SpannungL2)
-            client.publish("Smartmeter/SpannungL3",SpannungL3)
-            client.publish("Smartmeter/StromL1",StromL1)
-            client.publish("Smartmeter/StromL2",StromL2)
-            client.publish("Smartmeter/StromL3",StromL3)
-            client.publish("Smartmeter/Leistungsfaktor",Leistungsfaktor)
+        print()
+
     except BaseException as err:
         print("Fehler: ", format(err))
         continue
