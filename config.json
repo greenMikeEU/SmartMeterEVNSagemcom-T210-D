@@ -1,0 +1,14 @@
+{
+    "port": "/dev/ttyS0",
+    "baudrate": 2400,
+    "key": "016F76543557DE95260DA068B9C640A9",
+    "printValue": true,
+    "useMQTT": false,
+    "mqttbrokerip": "",
+    "mqttbrokerport": "",
+    "mqttbrokeruser": "",
+    "mqttbrokerpasswort": "",
+    "useInfluxdb": false,
+    "influxdbip": "",
+    "influxdbport":"" 
+}
