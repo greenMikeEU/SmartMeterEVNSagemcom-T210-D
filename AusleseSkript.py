@@ -2,7 +2,6 @@ import json
 import sys
 import os
 import serial
-from influxdb import InfluxDBClient
 from datetime import datetime
 from binascii import unhexlify
 import paho.mqtt.client as mqtt
@@ -65,6 +64,7 @@ influxdbdatenbank = 'SmartMeter'
 
 if useinfluxdb:
     try:
+        from influxdb import InfluxDBClient
         clientinfluxdb = InfluxDBClient(host=influxdbhost, port=influxdbport, database=influxdbdatenbank)
     except Exception as err:
         print("Kann nicht mit InfluxDB verbinden!")
