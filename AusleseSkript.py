@@ -2,10 +2,8 @@ import json
 import sys
 import os
 import serial
-from influxdb import InfluxDBClient
 from datetime import datetime
 from binascii import unhexlify
-import paho.mqtt.client as mqtt
 from gurux_dlms.GXDLMSTranslator import GXDLMSTranslator
 from gurux_dlms.TranslatorOutputType import TranslatorOutputType
 from bs4 import BeautifulSoup
@@ -63,7 +61,27 @@ influxdbhost = config['influxdbip']
 influxdbport = config['influxdbport']
 influxdbdatenbank = 'SmartMeter'
 
+tr = GXDLMSTranslator()
+ser = serial.Serial( port=comport,
+         baudrate=2400,
+         bytesize=serial.EIGHTBITS,
+         parity=serial.PARITY_NONE,
+         stopbits=serial.STOPBITS_ONE
+)
+
+#MQTT Init
+if useMQTT:
+    import paho.mqtt.client as mqtt
+    try:
+        client = mqtt.Client("SmartMeter")
+        client.username_pw_set(mqttuser, mqttpasswort)
+        client.connect(mqttBroker, mqttport)
+    except:
+        print("Die Ip Adresse des Brokers ist falsch!")
+        sys.exit()
+
 if useinfluxdb:
+    from influxdb import InfluxDBClient
     try:
         clientinfluxdb = InfluxDBClient(host=influxdbhost, port=influxdbport, database=influxdbdatenbank)
     except Exception as err:
@@ -94,26 +112,6 @@ def evn_decrypt(frame, key, systemTitel, frameCounter):
     init_vector = unhexlify(systemTitel + frameCounter)
     cipher = AES.new(encryption_key, AES.MODE_GCM, nonce=init_vector)
     return cipher.decrypt(frame).hex()
-
-
-#MQTT Init
-if useMQTT:
-    try:
-        client = mqtt.Client("SmartMeter")
-        client.username_pw_set(mqttuser, mqttpasswort)
-        client.connect(mqttBroker, mqttport)
-    except:
-        print("Die Ip Adresse des Brokers ist falsch!")
-        sys.exit()
-tr = GXDLMSTranslator()
-ser = serial.Serial( port=comport,
-         baudrate=2400,
-         bytesize=serial.EIGHTBITS,
-         parity=serial.PARITY_NONE,
-         stopbits=serial.STOPBITS_ONE
-)
-
-
 
 while 1:
     daten = ser.read(size=282).hex()    
