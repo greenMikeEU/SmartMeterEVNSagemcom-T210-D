@@ -226,71 +226,71 @@ while 1:
         print("-------------\tLeistungsfaktor:\t\t "+str(Leistungsfaktor))
         print("-------------\tWirkleistunggesamt [w]:\t\t " + str(MomentanleistungP-MomentanleistungN))
         
-        #MQTT
-        if useMQTT:
-            client.publish("Smartmeter/WirkenergieBezug",WirkenergieP)
-            client.publish("Smartmeter/WirkenergieLieferung",WirkenergieN)
-            client.publish("Smartmeter/WirkleistungBezug",MomentanleistungP)
-            client.publish("Smartmeter/WirkleistungLieferung",MomentanleistungN)
-            client.publish("Smartmeter/Wirkleistunggesamt",MomentanleistungP - MomentanleistungN)
-            client.publish("Smartmeter/SpannungL1",SpannungL1)
-            client.publish("Smartmeter/SpannungL2",SpannungL2)
-            client.publish("Smartmeter/SpannungL3",SpannungL3)
-            client.publish("Smartmeter/StromL1",StromL1)
-            client.publish("Smartmeter/StromL2",StromL2)
-            client.publish("Smartmeter/StromL3",StromL3)
-            client.publish("Smartmeter/Leistungsfaktor",Leistungsfaktor)
-        try:
-            if useinfluxdb:
-                mytime = int(time.time()*1000000000)
-                json_body = [
-                {
-                    "measurement": "Wirkenergie",
-                    "fields": {
-                        "Bezug": WirkenergieP,
-                        "Lieferung": WirkenergieN
-                    },
-                    "time": mytime
+    #MQTT
+    if useMQTT:
+        client.publish("Smartmeter/WirkenergieBezug",WirkenergieP)
+        client.publish("Smartmeter/WirkenergieLieferung",WirkenergieN)
+        client.publish("Smartmeter/WirkleistungBezug",MomentanleistungP)
+        client.publish("Smartmeter/WirkleistungLieferung",MomentanleistungN)
+        client.publish("Smartmeter/Wirkleistunggesamt",MomentanleistungP - MomentanleistungN)
+        client.publish("Smartmeter/SpannungL1",SpannungL1)
+        client.publish("Smartmeter/SpannungL2",SpannungL2)
+        client.publish("Smartmeter/SpannungL3",SpannungL3)
+        client.publish("Smartmeter/StromL1",StromL1)
+        client.publish("Smartmeter/StromL2",StromL2)
+        client.publish("Smartmeter/StromL3",StromL3)
+        client.publish("Smartmeter/Leistungsfaktor",Leistungsfaktor)
+    try:
+        if useinfluxdb:
+            mytime = int(time.time()*1000000000)
+            json_body = [
+            {
+                "measurement": "Wirkenergie",
+                "fields": {
+                    "Bezug": WirkenergieP,
+                    "Lieferung": WirkenergieN
                 },
-                {
-                    "measurement": "Momentanleistung",
-                    "fields": {
-                        "Bezug": MomentanleistungP,
-                        "Lieferung": MomentanleistungN,
-                        "Gesamt": MomentanleistungP-MomentanleistungN
-                    },
-                    "time": mytime
+                "time": mytime
+            },
+            {
+                "measurement": "Momentanleistung",
+                "fields": {
+                    "Bezug": MomentanleistungP,
+                    "Lieferung": MomentanleistungN,
+                    "Gesamt": MomentanleistungP-MomentanleistungN
                 },
-                {
-                    "measurement": "Spannung",
-                    "fields": {
-                        "L1": SpannungL1,
-                        "L2": SpannungL2,
-                        "L3": SpannungL3,
-                    },
-                    "time": mytime
+                "time": mytime
+            },
+            {
+                "measurement": "Spannung",
+                "fields": {
+                    "L1": SpannungL1,
+                    "L2": SpannungL2,
+                    "L3": SpannungL3,
                 },
-                {
-                    "measurement": "Strom",
-                    "fields": {
-                        "L1": StromL1,
-                        "L2": StromL2,
-                        "L3": StromL3,
-                    },
-                    "time": mytime
+                "time": mytime
+            },
+            {
+                "measurement": "Strom",
+                "fields": {
+                    "L1": StromL1,
+                    "L2": StromL2,
+                    "L3": StromL3,
                 },
-                {
-                    "measurement": "Leistungsfaktor",
-                    "fields": {
-                        "value": Leistungsfaktor
-                    },
-                    "time": mytime
-                }
-                ]
-                clientinfluxdb.write_points(json_body,database=influxdbdatenbank)
-        except BaseException as err:
-            print("Es ist ein Fehler aufgetreten.")
-            print()
-            print("Fehler: ", format(err))
-            sys.exit()
+                "time": mytime
+            },
+            {
+                "measurement": "Leistungsfaktor",
+                "fields": {
+                    "value": Leistungsfaktor
+                },
+                "time": mytime
+            }
+            ]
+            clientinfluxdb.write_points(json_body,database=influxdbdatenbank)
+    except BaseException as err:
+        print("Es ist ein Fehler aufgetreten.")
+        print()
+        print("Fehler: ", format(err))
+        sys.exit()
 
