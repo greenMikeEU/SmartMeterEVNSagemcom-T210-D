@@ -32,3 +32,4 @@ sudo pip3 install pyserial
 sudo pip3 install cryptography
 sudo pip install influxdb
 sudo pip3 install html5lib
+sudo pip3 install sdnotify

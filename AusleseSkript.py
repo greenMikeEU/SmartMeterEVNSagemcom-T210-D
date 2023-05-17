@@ -11,6 +11,7 @@ from Cryptodome.Cipher import AES
 from time import sleep
 import xml.etree.ElementTree as ET
 import time
+import sdnotify
 
 
 #Aktuellen Dateipfad finden und mit config.json erweitern
@@ -112,6 +113,9 @@ def evn_decrypt(frame, key, systemTitel, frameCounter):
     init_vector = unhexlify(systemTitel + frameCounter)
     cipher = AES.new(encryption_key, AES.MODE_GCM, nonce=init_vector)
     return cipher.decrypt(frame).hex()
+
+n = sdnotify.SystemdNotifier()
+n.notify("READY=1")
 
 while 1:
     daten = ser.read(size=282).hex()    
@@ -225,6 +229,8 @@ while 1:
         print("-------------\tWirkleistunggesamt [w]:\t\t " + str(MomentanleistungP-MomentanleistungN))
         
     #MQTT
+    
+    n.notify("WATCHDOG=1")
     if useMQTT:
         client.publish("Smartmeter/WirkenergieBezug",WirkenergieP)
         client.publish("Smartmeter/WirkenergieLieferung",WirkenergieN)
