@@ -245,7 +245,7 @@ while 1:
         client.publish("Smartmeter/StromL3",StromL3)
         client.publish("Smartmeter/Leistungsfaktor",Leistungsfaktor)
         current_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        client.publish("Smartmeter/last_seen", f'"last_seen": {current_timestamp}')
+        client.publish("Smartmeter/last_seen", current_timestamp)
 
     try:
         if useinfluxdb:
