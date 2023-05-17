@@ -77,6 +77,8 @@ if useMQTT:
         client = mqtt.Client("SmartMeter")
         client.username_pw_set(mqttuser, mqttpasswort)
         client.connect(mqttBroker, mqttport)
+        current_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        client.publish("Smartmeter/uptime", current_timestamp)
     except:
         print("Die Ip Adresse des Brokers ist falsch!")
         sys.exit()
