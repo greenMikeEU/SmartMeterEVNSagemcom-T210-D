@@ -4,11 +4,11 @@ sudo ./setup.sh
 
 
 ## operate
-
+```bash
 sudo systemctl daemon-reload
 sudo systemctl restart smartmeter.service
 sudo systemctl status smartmeter.service
-
+```
 ## fix
 
 sudo vi "/etc/systemd/system/smartmeter.service"
