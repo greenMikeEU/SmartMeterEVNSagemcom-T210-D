@@ -332,8 +332,6 @@ while 1:
         dataJson['data']['Leistungsfaktor'] = Leistungsfaktor
         jsonStr = json.dumps(dataJson)
 
-        print(jsonStr + "\n")
-
         url = config['RESTurl']
 
         resp = requests.post(url, data=jsonStr, auth=HTTPBasicAuth(config['RESTuser'], config['RESTpass']))
