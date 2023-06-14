@@ -86,3 +86,11 @@ sensor:
     device_class: "energy"
     state_class: "measurement"
     suggested_display_precision: 3
+  - name: "SmartmeterUptime"
+    unique_id: "smartmeteruptime"
+    state_topic: "Smartmeter/uptime"
+    device_class: timestamp
+  - name: "SmartmeterLastSeen"
+    unique_id: "smartmeterlastseen"
+    state_topic: "Smartmeter/last_seen"
+    device_class: timestamp
