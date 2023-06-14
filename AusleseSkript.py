@@ -136,7 +136,7 @@ if useMQTT:
         except:
             print("Lost Connection to MQTT...Trying to reconnect in 2 Seconds")
             time.sleep(2)
-    current_timestamp = datetime.now().isoformat()
+    current_timestamp = datetime.now(timezone.utc).isoformat()
     client.publish("Smartmeter/last_seen", current_timestamp)
     client.publish("Smartmeter/uptime", uptime)
     
