@@ -3,6 +3,7 @@ import sys
 import os
 import serial
 from datetime import datetime
+from datetime import timezone
 from binascii import unhexlify
 from gurux_dlms.GXDLMSTranslator import GXDLMSTranslator
 from gurux_dlms.TranslatorOutputType import TranslatorOutputType
