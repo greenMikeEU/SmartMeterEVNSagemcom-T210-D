@@ -125,6 +125,20 @@ def evn_decrypt(frame, key, systemTitel, frameCounter):
 n = sdnotify.SystemdNotifier()
 n.notify("READY=1")
 
+# MQTT
+if useMQTT:
+    connected = False
+    while not connected:
+        try:
+            client.reconnect()
+            connected = True
+        except:
+            print("Lost Connection to MQTT...Trying to reconnect in 2 Seconds")
+            time.sleep(2)
+    current_timestamp = datetime.now().isoformat()
+    client.publish("Smartmeter/last_seen", current_timestamp)
+    client.publish("Smartmeter/uptime", uptime)
+    
 while 1:
     daten = ser.read(size=282).hex()
     mbusstart = daten[0:8]
