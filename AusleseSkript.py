@@ -129,6 +129,17 @@ while 1:
         ser.close()
         ser.open()
 
+    if frameLen < 200:
+        print("Framelength too short! " + str(frameLen))
+        print("Restarting serial port....")
+        sys.stdout.flush()
+        sleep(2.5)
+        ser.flushOutput()
+        ser.close()
+        ser.open()
+        continue
+
+
     apdu = evn_decrypt(frame,key,systemTitel,frameCounter)
     if apdu[0:4] != "0f80" :
         continue
