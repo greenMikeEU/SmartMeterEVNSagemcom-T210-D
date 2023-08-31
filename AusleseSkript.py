@@ -87,7 +87,7 @@ if useinfluxdb:
     except Exception as err:
         print("Kann nicht mit InfluxDB verbinden!")
         print()
-        print("InfluxDB-Fehler: ", format(err))
+        print("Fehler: ", format(err))
         sys.exit()
     
 
@@ -154,7 +154,7 @@ while 1:
 #        print(found_lines)
     except BaseException as err:
         #print("APU: ", format(apdu))
-        print("Fehler-1: ", format(err))
+        print("Fehler: ", format(err))
         continue;
 
     try:
@@ -191,7 +191,7 @@ while 1:
                Leistungsfaktor = element['value']*0.001
 
     except BaseException as err:
-        print("Fehler-2: ", format(err))
+        print("Fehler: ", format(err))
         continue;    
     
 
@@ -289,6 +289,6 @@ while 1:
     except BaseException as err:
         print("Es ist ein Fehler aufgetreten.")
         print()
-        print("InluxDB-Upload-Fehler: ", format(err))
+        print("Fehler: ", format(err))
         sys.exit()
 
