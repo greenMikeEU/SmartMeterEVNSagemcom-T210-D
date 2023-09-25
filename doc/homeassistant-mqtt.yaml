@@ -1,0 +1,96 @@
+# in configuration.yaml:
+# mqtt: !include mqtt.yaml
+# in mqtt.yaml inhalt:
+sensor:
+  - name: "WirkenergieBezug"
+    unique_id: "WirkenergieBezug"
+    state_topic: "Smartmeter/WirkenergieBezug"
+    suggested_display_precision: 1
+    unit_of_measurement: "kWh"
+    device_class: "energy"
+    state_class: "total_increasing"
+  - name: "WirkenergieLieferung"
+    unique_id: "WirkenergieLieferung"
+    state_topic: "Smartmeter/WirkenergieLieferung"
+    suggested_display_precision: 1
+    unit_of_measurement: "kWh"
+    device_class: "energy"
+    state_class: "total_increasing"
+  - name: "WirkleistungBezug"
+    unique_id: "WirkleistungBezug"
+    device_class: "energy"
+    state_class: "measurement"
+    state_topic: "Smartmeter/WirkleistungBezug"
+    unit_of_measurement: "W"
+    suggested_display_precision: 0
+  - name: "WirkleistungLieferung"
+    unique_id: "WirkleistungLieferung"
+    device_class: "energy"
+    state_class: "measurement"
+    state_topic: "Smartmeter/WirkleistungLieferung"
+    unit_of_measurement: "W"
+    suggested_display_precision: 0
+  - name: "Wirkleistunggesamt"
+    unique_id: "Wirkleistunggesamt"
+    device_class: "energy"
+    state_class: "measurement"
+    state_topic: "Smartmeter/Wirkleistunggesamt"
+    unit_of_measurement: "W"
+    suggested_display_precision: 0
+  - name: "SpannungL1"
+    unique_id: "SpannungL1"
+    device_class: "energy"
+    state_class: "measurement"
+    state_topic: "Smartmeter/SpannungL1"
+    unit_of_measurement: "V"
+    suggested_display_precision: 1
+  - name: "SpannungL2"
+    unique_id: "SpannungL2"
+    device_class: "energy"
+    state_class: "measurement"
+    state_topic: "Smartmeter/SpannungL2"
+    unit_of_measurement: "V"
+    suggested_display_precision: 2
+  - name: "SpannungL3"
+    unique_id: "SpannungL3"
+    device_class: "energy"
+    state_class: "measurement"
+    state_topic: "Smartmeter/SpannungL3"
+    unit_of_measurement: "V"
+    suggested_display_precision: 1
+  - name: "StromL1"
+    unique_id: "StromL1"
+    device_class: "energy"
+    state_class: "measurement"
+    state_topic: "Smartmeter/StromL1"
+    unit_of_measurement: "A"
+    suggested_display_precision: 2
+  - name: "StromL2"
+    unique_id: "StromL2"
+    device_class: "energy"
+    state_class: "measurement"
+    state_topic: "Smartmeter/StromL2"
+    unit_of_measurement: "A"
+    suggested_display_precision: 2
+  - name: "StromL3"
+    unique_id: "StromL3"
+    device_class: "energy"
+    state_class: "measurement"
+    state_topic: "Smartmeter/StromL3"
+    unit_of_measurement: "A"
+    suggested_display_precision: 2
+  - name: "Leistungsfaktor"
+    unique_id: "Leistungsfaktor"
+    state_topic: "Smartmeter/Leistungsfaktor"
+    unit_of_measurement: "%"
+    device_class: "energy"
+    state_class: "measurement"
+    suggested_display_precision: 3
+  - name: "SmartmeterUptime"
+    unique_id: "smartmeteruptime"
+    state_topic: "Smartmeter/uptime"
+    device_class: timestamp
+  - name: "SmartmeterLastSeen"
+    unique_id: "smartmeterlastseen"
+    state_topic: "Smartmeter/last_seen"
+    device_class: timestamp
