@@ -23,12 +23,12 @@ sudo apt-get update
 apt install python3 idle3
 sudo apt-get install python3-pip
 # Installation von Python Paketen
-sudo pip3 install gurux-dlms  
-sudo pip3 install beautifulsoup4
-sudo pip3 install paho-mqtt
-sudo apt-get install libxslt-dev
+sudo pip3 install gurux-dlms --break-system-packages
+sudo pip3 install beautifulsoup4 --break-system-packages
+sudo pip3 install paho-mqtt==1.6.1 --break-system-packages
+sudo apt-get install libxslt-dev --break-system-packages
+sudo pip3 install pyserial --break-system-packages
+sudo pip3 install cryptography --break-system-packages
+sudo pip install influxdb --break-system-packages
+sudo pip3 install html5lib --break-system-packages
 sudo apt install python3-pycryptodome
-sudo pip3 install pyserial
-sudo pip3 install cryptography
-sudo pip install influxdb
-sudo pip3 install html5lib
